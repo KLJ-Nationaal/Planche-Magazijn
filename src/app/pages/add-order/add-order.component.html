@@ -1,64 +1,44 @@
 <form [formGroup]="form" (ngSubmit)="submit()" class="form">
-  <h2>Nieuwe order lijn</h2>
+  <h2>Nieuwe order</h2>
 
   <div class="row">
-    <label>Voornaam</label>
-    <input type="text" formControlName="firstName" />
-    <small *ngIf="hasError('firstName','required')">Voornaam is verplicht.</small>
-    <small *ngIf="hasError('firstName','minlength')">Minstens 2 karakters.</small>
+    <label>Naam bestelling</label>
+    <input type="text" formControlName="name" />
+    <small *ngIf="hasError('name','required')">Naam is verplicht.</small>
+    <small *ngIf="hasError('name','minlength')">Minstens 2 karakters.</small>
   </div>
 
   <div class="row">
-    <label>Achternaam</label>
-    <input type="text" formControlName="lastName" />
-    <small *ngIf="hasError('lastName','required')">Achternaam is verplicht.</small>
+    <label>Doel activiteit</label>
+    <input type="text" formControlName="goalActivity" />
+    <small *ngIf="hasError('goal','required')">Achternaam is verplicht.</small>
   </div>
 
   <div class="row">
-    <label>E-mail</label>
-    <input type="email" formControlName="email" />
-    <small *ngIf="hasError('email','required')">E-mail is verplicht.</small>
-    <small *ngIf="hasError('email','email')">Geef een geldige e-mail.</small>
+    <label>Timing</label>
+    <input type="text" formControlName="timing" />
+    <small *ngIf="hasError('timing','required')">Timing is verplicht.</small>
   </div>
 
   <div class="row">
-    <label>Telefoon</label>
-    <input type="tel" formControlName="phone" />
+    <label>Locatie</label>
+    <input type="text" formControlName="location" />
+    <small *ngIf="hasError('timing','required')">Locatie is verplicht.</small>
   </div>
 
-  <fieldset formGroupName="address">
-    <legend>Adres</legend>
-
-    <div class="row">
-      <label>Straat</label>
-      <input type="text" formControlName="street" />
-      <small *ngIf="hasError('address.street','required')">Straat is verplicht.</small>
-    </div>
-
-    <div class="row">
-      <label>Postcode</label>
-      <input type="text" formControlName="zip" />
-      <small *ngIf="hasError('address.zip','required')">Postcode is verplicht.</small>
-      <small *ngIf="hasError('address.zip','pattern')">4 cijfers (BE).</small>
-    </div>
-
-    <div class="row">
-      <label>Gemeente</label>
-      <input type="text" formControlName="city" />
-      <small *ngIf="hasError('address.city','required')">Gemeente is verplicht.</small>
-    </div>
-  </fieldset>
+  <ag-grid-angular
+    class="ag-theme-quartz"
+    style="width: 100%; height: 520px"
+    [rowData]="rowData"
+    [columnDefs]="columnDefs"
+    [defaultColDef]="defaultColDef"
+    [pinnedBottomRowData]="pinnedBottomRowData"
+    [stopEditingWhenCellsLoseFocus]="true"
+    (gridReady)="onGridReady($event)">
+  </ag-grid-angular>
 
   <div class="row">
-    <label>Notities</label>
-    <button type="button" (click)="addNote()">+ Voeg note toe</button>
-    <div formArrayName="notes">
-      <div *ngFor="let _ of notes.controls; let i = index" class="note-row">
-        <input [formControlName]="i" />
-        <button type="button" (click)="removeNote(i)">Verwijder</button>
-      </div>
-    </div>
+    <button type="submit" [disabled]="form.invalid">Opslaan</button>
   </div>
-
-  <button type="submit" [disabled]="form.invalid">Verzenden</button>
 </form>
+
