@@ -1,0 +1,13 @@
+@if (isAuthenticated) {
+  <nav class="topbar">
+    <div class="left">
+      <img src="assets/logo.png" alt="Logo" class="logo" />
+    </div>
+    <div class="center">
+      <h1>Magazijn</h1>
+    </div>
+    <div class="right">
+      <button (click)="logout()">Logout</button>
+    </div>
+  </nav>
+}

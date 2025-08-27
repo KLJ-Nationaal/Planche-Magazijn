@@ -1,5 +1,5 @@
 <form [formGroup]="form" (ngSubmit)="submit()" class="form">
-  <h2>Nieuwe order</h2>
+  <h2>Bestelling aanmaken</h2>
 
   <div class="row">
     <label>Naam bestelling</label>
@@ -36,6 +36,11 @@
     [stopEditingWhenCellsLoseFocus]="true"
     (gridReady)="onGridReady($event)">
   </ag-grid-angular>
+
+  <div class="row">
+    <label>Algemene opmerkingen</label>
+    <textarea formControlName="comment"></textarea>
+  </div>
 
   <div class="row">
     <button type="submit" [disabled]="form.invalid">Opslaan</button>

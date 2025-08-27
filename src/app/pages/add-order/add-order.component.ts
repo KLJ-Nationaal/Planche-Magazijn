@@ -6,9 +6,10 @@ import { ColDef, GridApi, GridReadyEvent, ICellRendererParams, ColSpanParams } f
 
 type Row = {
   id: number;
-  name?: string;
-  qty?: number | null;
-  price?: number | null;
+  description?: string;
+  quantity?: number | null;
+  unit?: string | null;
+  remarks?: string | null;
 };
 
 @Component({
@@ -49,17 +50,26 @@ export class AddOrderComponent {
   }
 
   rowData: Row[] = [
-    { id: 1, name: 'Apples', qty: 10, price: 1.2 },
-    { id: 2, name: 'Bananas', qty: 5, price: 0.8 },
-    { id: 3, name: 'Cherries', qty: 2, price: 2.9 },
+    { id: 1, description: 'Apples', quantity: 10, unit: 'Totaal' },
+    { id: 2, description: 'Bananas', quantity: 5, unit: 'Per stuks' },
+    { id: 3, description: 'Cherries', quantity: 2, unit: 'Per deelnemer' },
   ];
 
   columnDefs: ColDef<Row | any>[] = [
-    { field: 'id', headerName: 'ID', editable: false, width: 90 },
-    { field: 'name', headerName: 'Name', editable: true, minWidth: 160 },
-    { field: 'qty', headerName: 'Qty', editable: true, width: 110 },
-    { field: 'price', headerName: 'Price', editable: true, width: 140 },
-
+    { field: 'id', headerName: 'Nummer', editable: false, width: 100 },
+    { field: 'description', headerName: 'Omschrijving materiaal', editable: true, minWidth: 160 },
+    { field: 'quantity', headerName: 'Aantal', editable: true, width: 110 },
+    { 
+      field: 'unit', 
+      headerName: 'Unit', 
+      editable: true, 
+      cellEditor: 'agSelectCellEditor',
+      cellEditorParams: {
+        values: ['Per deelnemer', 'Totaal', 'Per stuks']  // dropdown opties
+      },
+      width: 140 
+    },
+    { field: 'remarks', headerName: 'Opmerkingen', editable: true, width: 200 },
     // Actions column: delete per row
     {
       headerName: 'Actions',
@@ -108,23 +118,23 @@ export class AddOrderComponent {
         btn.innerHTML = `<span class="material-symbols-outlined" aria-hidden="true">add</span>`;
         btn.addEventListener('click', (ev) => {
           ev.stopPropagation();
-          const blank: Row = { id: Date.now(), name: '', qty: null, price: null };
+          const blank: Row = { id: Date.now(), description: '', quantity: null, unit: null };
           p.api.applyTransaction({ add: [blank] });
           const idx = p.api.getDisplayedRowCount() - 1;
-          p.api.setFocusedCell(idx, 'name');
-          p.api.startEditingCell({ rowIndex: idx, colKey: 'name' });
+          p.api.setFocusedCell(idx, 'description');
+          p.api.startEditingCell({ rowIndex: idx, colKey: 'description' });
         });
         return btn;
       },
       onCellClicked: params => {
         if (params.node?.rowPinned) {
-          const blank: Row = { id: this.nextId++, name: '', qty: null, price: null };
+          const blank: Row = { id: this.nextId++, description: '', quantity: null, unit: null };
           params.api.applyTransaction({ add: [blank] });
 
           // focus first editable cell of the new row
           const idx = params.api.getDisplayedRowCount() - 1;
-          params.api.setFocusedCell(idx, 'name');
-          params.api.startEditingCell({ rowIndex: idx, colKey: 'name' });
+          params.api.setFocusedCell(idx, 'description');
+          params.api.startEditingCell({ rowIndex: idx, colKey: 'description' });
         }
       },
     },

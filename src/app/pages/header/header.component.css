@@ -1,0 +1,26 @@
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #1976d2;
+  color: white;
+  padding: 0.5rem 1rem;
+}
+
+.topbar .logo {
+  height: 40px;
+}
+
+.topbar .center h1 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.topbar .right button {
+  background: white;
+  border: none;
+  color: #1976d2;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
