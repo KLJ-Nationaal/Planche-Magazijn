@@ -32,6 +32,7 @@ export class AddOrderComponent {
     goalActivity: this.fb.control('', [Validators.required]),
     timing: this.fb.control('', [Validators.required]), // keep simple; change to a date validator if you like
     location: this.fb.control('', []),
+    comment: this.fb.control('', { nonNullable: true }),
   });
 
   submit() {

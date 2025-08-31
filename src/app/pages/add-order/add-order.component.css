@@ -1,2 +1,11 @@
-.form .row { margin-bottom: 12px; display: flex; flex-direction: column; }
-.form small { color: #b00020; }
+.form .row { 
+    margin-bottom: 12px; 
+    display: flex; 
+    flex-direction: column; 
+}
+.form small { 
+    color: #b00020; 
+}
+.textarea {
+    height: 200px;
+}
