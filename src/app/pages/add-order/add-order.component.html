@@ -1,30 +1,58 @@
 <form [formGroup]="form" (ngSubmit)="submit()" class="form">
   <h2>Bestelling aanmaken</h2>
+  <div class="group">
+    <div class="row two-col">
+      <div [class.invalid]="form.get('name')?.invalid && (form.get('name')?.touched || form.get('name')?.dirty)">
+        <label>Naam van bestelling</label>
+        <input type="text" formControlName="name" />
+        <small *ngIf="hasError('name', 'required')">Naam is verplicht.</small>
+        <small *ngIf="hasError('name', 'minlength')">Naam moet minstens 2 karakters bevatten.</small>
+      </div>
+      <div [class.invalid]="form.get('goalActivity')?.invalid && (form.get('goalActivity')?.touched || form.get('goalActivity')?.dirty)">
+        <label>Doel activiteit</label>
+        <input type="text" formControlName="goalActivity" />
+        <small *ngIf="hasError('goalActivity', 'required')">Geef een doel op.</small>
+      </div>
+    </div>
 
-  <div class="row">
-    <label>Naam bestelling</label>
-    <input type="text" formControlName="name" />
-    <small *ngIf="hasError('name','required')">Naam is verplicht.</small>
-    <small *ngIf="hasError('name','minlength')">Minstens 2 karakters.</small>
+    <div class="row two-col">
+      <div [class.invalid]="form.get('timing')?.invalid && (form.get('timing')?.touched || form.get('timing')?.dirty)">
+        <label>Timing</label>
+        <input type="text" formControlName="timing" />
+      </div>
+      <div [class.invalid]="form.get('location')?.invalid && (form.get('location')?.touched || form.get('location')?.dirty)">
+        <label>Locatie</label>
+        <input type="text" formControlName="location" />
+      </div>
+    </div>
   </div>
 
-  <div class="row">
-    <label>Doel activiteit</label>
-    <input type="text" formControlName="goalActivity" />
-    <small *ngIf="hasError('goal','required')">Achternaam is verplicht.</small>
-  </div>
-
-  <div class="row">
-    <label>Timing</label>
-    <input type="text" formControlName="timing" />
-    <small *ngIf="hasError('timing','required')">Timing is verplicht.</small>
-  </div>
-
-  <div class="row">
-    <label>Locatie</label>
-    <input type="text" formControlName="location" />
-    <small *ngIf="hasError('timing','required')">Locatie is verplicht.</small>
-  </div>
+<div class="group">
+  <div class="row two-col">
+      <div [class.invalid]="form.get('nameResponsible')?.invalid && (form.get('nameResponsible')?.touched || form.get('nameResponsible')?.dirty)">
+        <label>Naam verantwoordelijke</label>
+        <input type="text" formControlName="nameResponsible" />
+        <small *ngIf="hasError('nameResponsible', 'required')">Verantwoordelijke is verplicht.</small>
+        <small *ngIf="hasError('nameResponsible', 'minlength')">Verantwoordelijke moet minstens 2 karakters bevatten.</small>
+      </div>
+       <div [class.invalid]="form.get('emailResponsible')?.invalid && (form.get('emailResponsible')?.touched || form.get('emailResponsible')?.dirty)">
+        <label>Email verantwoordelijke</label>
+        <input type="email" formControlName="emailResponsible" />
+          <small *ngIf="hasError('emailResponsible','required')">Email is verplicht.</small>
+          <small *ngIf="hasError('emailResponsible','email')">Ongeldig e-mailadres.</small>
+      </div>
+    </div>
+    <div class="row two-col">
+      <div [class.invalid]="form.get('phoneResponsible')?.invalid && (form.get('phoneResponsible')?.touched || form.get('phoneResponsible')?.dirty)">
+        <label>Telefoonnummer verantwoordelijke</label>
+        <input type="tel" formControlName="phoneResponsible" inputmode="numeric" pattern="[0-9]{10}" />
+        <small *ngIf="hasError('phoneResponsible','required')">Telefoonnummer is verplicht.</small>
+        <small *ngIf="hasError('phoneResponsible','pattern')">
+          Ongeldig telefoonnummer (gebruik alleen cijfers, 10 tekens).
+        </small>
+      </div>
+    </div>
+</div>
 
   <ag-grid-angular
     class="ag-theme-quartz"
@@ -34,17 +62,17 @@
     [defaultColDef]="defaultColDef"
     [pinnedBottomRowData]="pinnedBottomRowData"
     [stopEditingWhenCellsLoseFocus]="true"
-    (gridReady)="onGridReady($event)">
+    (gridReady)="onGridReady($event)"
+  >
   </ag-grid-angular>
 
-  <div class="row">
+  <div class="row remarks">
     <label>Algemene opmerkingen</label>
     <textarea formControlName="comment"></textarea>
   </div>
 
-  <div class="row">
-    <button type="reset">Reset</button>
-    <button type="submit" [disabled]="form.invalid">Opslaan</button>
+  <div class="row actions">
+    <button type="reset" class="btn btn-secondary">Reset</button>
+    <button type="submit" class="btn btn-primary" [disabled]="form.invalid">Opslaan</button>
   </div>
 </form>
-

@@ -6,6 +6,108 @@
 .form small { 
     color: #b00020; 
 }
-.textarea {
+
+
+.form .row.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* twee gelijke kolommen */
+  gap: 40px;
+  margin-bottom: 1rem;
+  margin-right: 20px;
+}
+
+.form .row label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.form .row input,
+.form .row textarea {
+  width: 100%;
+  padding: 6px;
+}
+
+.group {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 1rem;
+  margin: 5px;
+  background-color: #fafafa;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.row.invalid input,
+.row.invalid textarea {
+  border: 1px solid #e74c3c;
+  background: #fff6f6;
+}
+
+.row small {
+  color: #e74c3c;
+  display: block;
+  margin-top: 4px;
+  font-size: 0.85em;
+}
+
+.actions {
+  display: flex;
+  gap: 1rem;          /* ruimte tussen de knoppen */
+  margin-top: 1.5rem; /* wat afstand boven de knoppen */
+}
+
+/* algemene knopstijl */
+.btn {
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+/* hover effect */
+.btn:hover:enabled {
+  transform: translateY(-1px);
+}
+
+/* disabled knop */
+.btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+/* primaire knop: Opslaan */
+.btn-primary {
+  background: #3498db;
+  color: white;
+}
+
+.btn-primary:hover:enabled {
+  background: #2980b9;
+}
+
+/* secundaire knop: Reset */
+.btn-secondary {
+  background: #ecf0f1;
+  color: #333;
+  border: 1px solid #bdc3c7;
+}
+
+.btn-secondary:hover:enabled {
+  background: #dcdfe1;
+}
+
+ag-grid-angular {
+    margin: 5px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.remarks {
+    margin: 5px;
+}
+
+.remarks textarea {
     height: 200px;
 }

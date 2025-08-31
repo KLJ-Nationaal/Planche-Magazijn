@@ -30,8 +30,11 @@ export class AddOrderComponent {
   form = this.fb.group({
     name: this.fb.control('', [Validators.required, Validators.minLength(2)]),
     goalActivity: this.fb.control('', [Validators.required]),
-    timing: this.fb.control('', [Validators.required]), // keep simple; change to a date validator if you like
-    location: this.fb.control('', []),
+    timing: this.fb.control({ value: '', disabled: true }), // keep simple; change to a date validator if you like
+    location: this.fb.control({ value: '', disabled: true }),
+    nameResponsible: this.fb.control('', [Validators.required, Validators.minLength(2)]),
+    emailResponsible: this.fb.control('', [Validators.required, Validators.email]),
+    phoneResponsible: this.fb.control('', [Validators.required, Validators.pattern(/^[0-9]{8,15}$/)]),
     comment: this.fb.control('', { nonNullable: true }),
   });
 
