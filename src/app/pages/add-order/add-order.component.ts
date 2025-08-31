@@ -63,7 +63,14 @@ export class AddOrderComponent {
   
 
   columnDefs: ColDef<Row | any>[] = [
-    { field: 'id', headerName: 'Nummer', editable: false, width: 100 },
+    { 
+       headerName: 'Nummer',
+      width: 90,
+      editable: false,
+      sortable: false,
+      filter: false,
+      valueGetter: (p) => p.node?.rowPinned ? '' : ((p.node?.rowIndex ?? 0) + 1),
+    },
     { field: 'description', headerName: 'Omschrijving materiaal', editable: true, minWidth: 160 },
     { field: 'quantity', headerName: 'Aantal', editable: true, width: 110 },
     { 
