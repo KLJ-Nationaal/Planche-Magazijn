@@ -1,4 +1,4 @@
-<form [formGroup]="form" (ngSubmit)="submit()" class="form">
+<form [formGroup]="form" (ngSubmit)="submit()" (keydown.enter)="$event.preventDefault()" class="form">
   <h2>Bestelling aanmaken</h2>
   <div class="group">
     <div class="row two-col">
@@ -53,18 +53,20 @@
       </div>
     </div>
 </div>
-
-  <ag-grid-angular
-    class="ag-theme-quartz"
-    style="width: 100%; height: 520px"
-    [rowData]="rowData"
-    [columnDefs]="columnDefs"
-    [defaultColDef]="defaultColDef"
-    [pinnedBottomRowData]="pinnedBottomRowData"
-    [stopEditingWhenCellsLoseFocus]="true"
-    (gridReady)="onGridReady($event)"
-  >
-  </ag-grid-angular>
+  <div class="grid-card">
+    <ag-grid-angular
+      class="ag-theme-quartz"
+      style="width: 100%; height: 520px"
+      [rowData]="rowData"
+      [columnDefs]="columnDefs"
+      [defaultColDef]="defaultColDef"
+      [stopEditingWhenCellsLoseFocus]="true"
+      (gridReady)="onGridReady($event)">
+    </ag-grid-angular>
+    <div class="grid-footer">
+      <button class="btn btn-primary btn-full" (click)="addRow(); $event.preventDefault(); $event.stopPropagation();">➕ Nieuw item</button>
+    </div>
+  </div>
 
   <div class="row remarks">
     <label>Algemene opmerkingen</label>

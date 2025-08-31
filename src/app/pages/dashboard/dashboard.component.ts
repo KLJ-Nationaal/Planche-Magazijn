@@ -23,12 +23,11 @@ export class DashboardComponent implements OnInit {
   ngOnInit(): void {
     // Set data after view init to ensure bindings are live
     this.columnDefs = [
-      { field: 'id', headerName: 'Nummer' },
-      { field: 'name', headerName: 'Naam', editable: true },
+      { field: 'id', headerName: 'Bestelnummer' },
+      { field: 'name', headerName: 'Naam' },
       { field: 'responsible', headerName: 'Verantwoordelijke' },
       { field: 'orderStatus', 
         headerName: 'Status', 
-        editable: true, 
         cellEditor: 'agSelectCellEditor',
         cellEditorParams: {
           values: [
@@ -41,9 +40,9 @@ export class DashboardComponent implements OnInit {
     ];
 
     this.rowData = [
-      { id: 1, name: 'B1', responsible: 'Jef', orderStatus: OrderStatus.Processing },
-      { id: 2, name: 'B4', responsible: 'Jan', orderStatus: OrderStatus.Processing },
-      { id: 3, name: 'B5', responsible: 'Piet', orderStatus: OrderStatus.Completed }
+      { id: 1, name: 'Fuifbon', responsible: 'Jef', orderStatus: OrderStatus.Processing },
+      { id: 2, name: 'Nog een bon', responsible: 'Jan', orderStatus: OrderStatus.Processing },
+      { id: 3, name: 'Springkastelen', responsible: 'Piet', orderStatus: OrderStatus.Completed }
     ];
   }
 }

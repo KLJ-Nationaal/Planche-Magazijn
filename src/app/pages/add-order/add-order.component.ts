@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { AgGridAngular } from 'ag-grid-angular';
-import { ColDef, GridApi, GridReadyEvent, ICellRendererParams, ColSpanParams } from 'ag-grid-community';
+import { ColDef, GridApi, GridReadyEvent, ICellRendererParams } from 'ag-grid-community';
 
 type Row = {
   id: number;
@@ -22,7 +22,14 @@ type Row = {
 export class AddOrderComponent {
   private fb = inject(FormBuilder);
   private gridApi!: GridApi<Row>;
-  private nextId = 4;
+
+  rowData: Row[] = [
+    { id: 1, description: 'Apples', quantity: 10, unit: 'Totaal' },
+    { id: 2, description: 'Bananas', quantity: 5, unit: 'Per stuks' },
+    { id: 3, description: 'Cherries', quantity: 2, unit: 'Per deelnemer' },
+  ];
+
+  private nextId = Math.max(...this.rowData.map(r => r.id), 0) + 1;
 
   // Easiest way: bind pinned bottom row data
   pinnedBottomRowData = [{ add: true } as any];
@@ -53,11 +60,7 @@ export class AddOrderComponent {
     return !!ctrl && ctrl.touched && ctrl.hasError(err);
   }
 
-  rowData: Row[] = [
-    { id: 1, description: 'Apples', quantity: 10, unit: 'Totaal' },
-    { id: 2, description: 'Bananas', quantity: 5, unit: 'Per stuks' },
-    { id: 3, description: 'Cherries', quantity: 2, unit: 'Per deelnemer' },
-  ];
+  
 
   columnDefs: ColDef<Row | any>[] = [
     { field: 'id', headerName: 'Nummer', editable: false, width: 100 },
@@ -83,8 +86,9 @@ export class AddOrderComponent {
       cellRenderer: (p: ICellRendererParams<Row>) => {
         if (p.node?.rowPinned) return '';
         const btn = document.createElement('button');
-        btn.className = 'icon-btn';
-        btn.title = 'Delete row';
+        btn.type = 'button';  
+        btn.className = 'icon-btn delete';
+        btn.title = 'Rij verwijderen';
         btn.innerHTML = `<span class="material-symbols-outlined">delete</span>`;
         btn.addEventListener('click', (ev) => {
           ev.stopPropagation();
@@ -98,50 +102,6 @@ export class AddOrderComponent {
         }
       },
     },
-
-    // Footer “Add row” button (rendered on the pinned bottom row)
-    {
-      headerName: '',
-      field: 'add',
-      flex: 1,
-      colSpan: (params: ColSpanParams<Row>) =>
-        params.node?.rowPinned ? params.api.getDisplayedCenterColumns().length : 1,
-      valueGetter: () => '',
-      cellRenderer: (p: ICellRendererParams<Row>) => {
-        if (!p.node?.rowPinned) return '';
-        // Right-align the *cell* itself
-        const cell = p.eGridCell as HTMLElement;
-        cell.style.display = 'flex';
-        cell.style.justifyContent = 'flex-end';
-        cell.style.alignItems = 'center';
-      
-        const btn = document.createElement('button');
-        btn.className = 'add-btn icon-only';
-        btn.title = 'Add row';
-        btn.setAttribute('aria-label', 'Add row');
-        btn.innerHTML = `<span class="material-symbols-outlined" aria-hidden="true">add</span>`;
-        btn.addEventListener('click', (ev) => {
-          ev.stopPropagation();
-          const blank: Row = { id: Date.now(), description: '', quantity: null, unit: null };
-          p.api.applyTransaction({ add: [blank] });
-          const idx = p.api.getDisplayedRowCount() - 1;
-          p.api.setFocusedCell(idx, 'description');
-          p.api.startEditingCell({ rowIndex: idx, colKey: 'description' });
-        });
-        return btn;
-      },
-      onCellClicked: params => {
-        if (params.node?.rowPinned) {
-          const blank: Row = { id: this.nextId++, description: '', quantity: null, unit: null };
-          params.api.applyTransaction({ add: [blank] });
-
-          // focus first editable cell of the new row
-          const idx = params.api.getDisplayedRowCount() - 1;
-          params.api.setFocusedCell(idx, 'description');
-          params.api.startEditingCell({ rowIndex: idx, colKey: 'description' });
-        }
-      },
-    },
   ];
 
   defaultColDef: ColDef = { resizable: true, sortable: true, filter: true };
@@ -149,5 +109,14 @@ export class AddOrderComponent {
   onGridReady(e: GridReadyEvent<Row>) {
     this.gridApi = e.api;
     // No API call needed for pinned rows — it's bound in the template.
+  }
+
+  addRow() {
+    const blank: Row = { id: this.nextId++, description: '', quantity: null, unit: null };
+    this.gridApi.applyTransaction({ add: [blank] });
+
+    const idx = this.gridApi.getDisplayedRowCount() - 1;
+    this.gridApi.setFocusedCell(idx, 'description');
+    this.gridApi.startEditingCell({ rowIndex: idx, colKey: 'description' });
   }
 }
