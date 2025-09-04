@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { AgGridAngular } from 'ag-grid-angular';
 import { ColDef, GridApi, GridReadyEvent, ICellRendererParams } from 'ag-grid-community';
+import { OrderService } from '../../services/order.service';
 
 type Row = {
   id: number;
@@ -22,17 +23,13 @@ type Row = {
 export class AddOrderComponent {
   private fb = inject(FormBuilder);
   private gridApi!: GridApi<Row>;
+  private orderService = inject(OrderService);  
 
-  rowData: Row[] = [
-    { id: 1, description: 'Apples', quantity: 10, unit: 'Totaal' },
-    { id: 2, description: 'Bananas', quantity: 5, unit: 'Per stuks' },
-    { id: 3, description: 'Cherries', quantity: 2, unit: 'Per deelnemer' },
-  ];
-
+  rowData: Row[] = [];
   private nextId = Math.max(...this.rowData.map(r => r.id), 0) + 1;
 
-  // Easiest way: bind pinned bottom row data
-  pinnedBottomRowData = [{ add: true } as any];
+  saving = false;
+  errorMsg: string | null = null;
 
   form = this.fb.group({
     name: this.fb.control('', [Validators.required, Validators.minLength(2)]),
@@ -45,22 +42,10 @@ export class AddOrderComponent {
     comment: this.fb.control('', { nonNullable: true }),
   });
 
-  submit() {
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
-      return;
-    }
-    console.log('Form value:', this.form.value);
-    alert('Formulier verzonden! 🎉');
-    this.form.reset();
-  }
-
   hasError(path: string, err: string) {
     const ctrl = this.form.get(path);
     return !!ctrl && ctrl.touched && ctrl.hasError(err);
   }
-
-  
 
   columnDefs: ColDef<Row | any>[] = [
     { 
@@ -115,7 +100,6 @@ export class AddOrderComponent {
 
   onGridReady(e: GridReadyEvent<Row>) {
     this.gridApi = e.api;
-    // No API call needed for pinned rows — it's bound in the template.
   }
 
   addRow() {
@@ -125,5 +109,49 @@ export class AddOrderComponent {
     const idx = this.gridApi.getDisplayedRowCount() - 1;
     this.gridApi.setFocusedCell(idx, 'description');
     this.gridApi.startEditingCell({ rowIndex: idx, colKey: 'description' });
+  }
+
+  private getRows(): Row[] {
+    const rows: Row[] = [];
+    this.gridApi.forEachNode(n => { if (!n.rowPinned) rows.push(n.data as Row); });
+    return rows;
+  }
+
+  submit() {
+    this.errorMsg = null;
+
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+    if (!this.gridApi) {
+      this.errorMsg = 'Grid is nog niet klaar.';
+      return;
+    }
+
+    this.gridApi.stopEditing(); // commit in-progress edits
+    const rows = this.getRows();
+    if (rows.length === 0) {
+      this.errorMsg = 'Voeg minstens één orderlijn toe.';
+      return;
+    }
+
+    this.saving = true;
+
+    // If you want the service to format timing, pass a Date as 3rd arg (or omit)
+    this.orderService.createFrom(this.form.getRawValue(), rows /*, new Date() */)
+      .subscribe({
+        next: res => {
+          alert(`Order aangemaakt met id: ${res.id}`);
+          this.form.reset();
+          this.gridApi.setGridOption('rowData', []);
+          this.nextId = 1;
+        },
+        error: err => {
+          console.error(err);
+          this.errorMsg = err?.error?.title || err?.error?.message || 'Opslaan mislukt';
+        },
+        complete: () => { this.saving = false; }
+      });
   }
 }
