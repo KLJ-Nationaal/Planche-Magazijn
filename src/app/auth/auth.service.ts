@@ -9,8 +9,8 @@ export class AuthService {
   private http = inject(HttpClient);
   private router = inject(Router);
   private readonly TOKEN_KEY = 'auth_token';
-  private readonly API = environment.apiBaseUrl; // bv. https://api.jouwdomein.be
-
+  private readonly API = environment.apiBaseUrl;
+  
   login(dto: { username: string; password: string }) {
     return this.http.post<{ token: string }>(`${this.API}/auth/login`, dto)
       .pipe(tap(res => localStorage.setItem(this.TOKEN_KEY, res.token)));

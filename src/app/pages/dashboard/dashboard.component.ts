@@ -38,11 +38,5 @@ export class DashboardComponent implements OnInit {
           ]
         }, valueFormatter: params => translateOrderStatus(params.value) }
     ];
-
-    this.rowData = [
-      { id: 1, name: 'Fuifbon', responsible: 'Jef', orderStatus: OrderStatus.Processing },
-      { id: 2, name: 'Nog een bon', responsible: 'Jan', orderStatus: OrderStatus.Processing },
-      { id: 3, name: 'Springkastelen', responsible: 'Piet', orderStatus: OrderStatus.Completed }
-    ];
   }
 }
