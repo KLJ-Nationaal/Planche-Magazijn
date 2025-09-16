@@ -24,3 +24,10 @@
   border-radius: 4px;
   cursor: pointer;
 }
+
+.logo-link {
+  text-decoration: none;   /* geen underline */
+  color: inherit;          /* neem kleur over van parent (bv. wit in je topbar) */
+  display: inline-flex;    /* handig als er een img of h1 in zit */
+  align-items: center;
+}

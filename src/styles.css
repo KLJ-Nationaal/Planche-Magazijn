@@ -2,6 +2,21 @@
 @import "ag-grid-community/styles/ag-grid.css";
 @import "ag-grid-community/styles/ag-theme-quartz.css";
 
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+app-root, app-header, app-footer {
+  display: block;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
 .ag-theme-quartz {
   --ag-row-height: 40px;
   --ag-header-height: 40px;

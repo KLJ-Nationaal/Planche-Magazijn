@@ -123,9 +123,13 @@
   --ag-header-height: 40px;
 }
 
-/* Footer direct tegen de grid */
 .grid-footer {
   border-top: 1px solid #e5e7eb;
   padding: 0;                  /* geen extra padding; btn-full pakt breedte */
   background: #f8fafc;
+}
+
+label.required::after {
+  content: " *";
+  color: red;
 }

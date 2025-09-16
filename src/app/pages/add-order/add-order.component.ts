@@ -57,14 +57,24 @@ export class AddOrderComponent {
       valueGetter: (p) => p.node?.rowPinned ? '' : ((p.node?.rowIndex ?? 0) + 1),
     },
     { field: 'description', headerName: 'Omschrijving materiaal', editable: true, minWidth: 160 },
-    { field: 'quantity', headerName: 'Aantal', editable: true, width: 110 },
+    { field: 'amount', headerName: 'Aantal', editable: true, width: 110 },
     { 
       field: 'unit', 
       headerName: 'Unit', 
       editable: true, 
       cellEditor: 'agSelectCellEditor',
       cellEditorParams: {
-        values: ['Per deelnemer', 'Totaal', 'Per stuks']  // dropdown opties
+        values: ['Stuks', 'Kilogram', 'Gram', 'Ton', 'Liter', 'Mililiter', 'Kilometer', 'Meter', 'Centimeter', 'Millimeter', 'Vierkante meter', 'Hectare', 'Kubiekemeter']
+      },
+      width: 140 
+    },
+    { 
+      field: 'amountType', 
+      headerName: 'Aantal per', 
+      editable: true, 
+      cellEditor: 'agSelectCellEditor',
+      cellEditorParams: {
+        values: ['Per deelnemer', 'Totaal']
       },
       width: 140 
     },

@@ -1,13 +1,15 @@
-@if (isAuthenticated) {
-  <nav class="topbar">
-    <div class="left">
+<nav class="topbar">
+  <div class="left">
+    <a routerLink="/dashboard" class="logo-link">
       <img src="assets/logo.png" alt="Logo" class="logo" />
-    </div>
-    <div class="center">
-      <h1>Magazijn</h1>
-    </div>
-    <div class="right">
-      <button (click)="logout()">Logout</button>
-    </div>
-  </nav>
-}
+    </a>
+  </div>
+  <div class="center">
+    <a routerLink="/dashboard" class="logo-link">
+      <h1>Magazijn App</h1>
+    </a>
+  </div>
+  <div class="right">
+    <button (click)="logout()">Logout</button>
+  </div>
+</nav>

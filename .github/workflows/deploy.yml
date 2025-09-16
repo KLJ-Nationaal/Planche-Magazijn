@@ -1,0 +1,50 @@
+name: Build & Deploy (on tag)
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - uses: actions/setup-node@v4
+        with: { node-version: 20, cache: 'npm' }
+
+      - run: npm ci
+
+      - name: Extract version from tag
+        id: version
+        run: 
+          RAW="${GITHUB_REF_NAME}"
+          CLEAN="${RAW#v}")
+          echo "VERSION=$CLEAN" >> $GITHUB_ENV
+          echo "SHORT_SHA=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+          echo "BUILD_DATE=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> $GITHUB_ENV
+
+      - name: Write version.ts
+        run: |
+          echo "export const buildInfo = { version: '${VERSION}', commit: '${SHORT_SHA}', date: '${BUILD_DATE}' };" > src/environments/version.ts
+
+      - name: Build Angular (prod)
+        run: npm run build -- --configuration production
+
+      # Deploy to OVH (FTPS/SFTP/FTP)
+      - name: Deploy to OVH
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server:   ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftps
+          local-dir: dist/magazijn-app/
+          server-dir: klj/

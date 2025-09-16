@@ -31,6 +31,7 @@ export class OrderService {
         name: (r.description ?? '').trim(),
         amount: Number.isFinite(Number(r.quantity)) ? Number(r.quantity) : 0,
         unit: (r.unit ?? '').toString(),
+        amountType: (r.amountType ?? '').toString(),
         remarks: (r.remarks ?? '').toString(),
       }));
   }

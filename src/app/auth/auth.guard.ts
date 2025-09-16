@@ -5,7 +5,11 @@ import { AuthService } from './auth.service';
 export const canActivateAuth: CanActivateFn = () => {
   const auth = inject(AuthService);
   const router = inject(Router);
-  if (auth.isAuthenticated) return true;
-  router.navigateByUrl('/login');
-  return false;
+  return auth.isAuthenticated ? true : router.parseUrl('/login');
+};
+
+export const redirectIfAuthenticated: CanActivateFn = () => {
+  const auth = inject(AuthService);
+  const router = inject(Router);
+  return auth.isAuthenticated ? router.parseUrl('/dashboard') : true;
 };
