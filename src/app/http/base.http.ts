@@ -4,6 +4,6 @@ import { environment } from '../environment';
 
 @Injectable({ providedIn: 'root' })
 export class BaseHttp {
-  private http = inject(HttpClient);
-  private readonly API_BASE = environment.apiBaseUrl;
+  protected http = inject(HttpClient);
+  protected readonly API_BASE = environment.apiBaseUrl;
 }

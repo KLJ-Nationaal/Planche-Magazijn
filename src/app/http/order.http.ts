@@ -1,13 +1,9 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { Order } from '../models/order.model';
-import { environment } from '../environment';
+import { BaseHttp } from './base.http';
 
 @Injectable({ providedIn: 'root' })
-export class OrderHttp {
-  private http = inject(HttpClient);
-  private readonly API_BASE = environment.apiBaseUrl;
-
+export class OrderHttp extends BaseHttp {
   add(order: Order) {
     return this.http.post<{ id: number }>(`${this.API_BASE}/orders/`, order);
   }

@@ -4,7 +4,7 @@ import { AgGridModule } from 'ag-grid-angular';
 import { CommonModule } from '@angular/common'; 
 import { HeaderComponent } from './pages/header/header.component';
 import { FooterComponent } from "./pages/footer/footer.component";
-import { AuthService } from './auth/auth.service';
+import { AuthService } from './http/auth.http';
 
 @Component({
   selector: 'app-root',
