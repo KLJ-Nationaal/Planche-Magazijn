@@ -1,5 +1,4 @@
-import { HttpClient, HttpClientModule } from '@angular/common/http';
-// … in @Component imports: voeg HttpClientModule toe
+import { HttpClient } from '@angular/common/http';
 
 export class AddOrderComponent {
   private fb = inject(FormBuilder);
@@ -18,16 +17,17 @@ export class AddOrderComponent {
     const v = this.form.getRawValue();
 
     // Verzamel grid-rijen -> API OrderItems
-    const orderItems: { name: string; amount: number; unit: string | null; remarks?: string | null }[] = [];
+    const orderItems: { name: string; amount: number; unit: string | null; amountType: string | null; remarks?: string | null }[] = [];
     this.gridApi.forEachNodeAfterFilterAndSort(n => {
       if (n.rowPinned) return;
       const r = n.data as Row;
       if (!r) return;
-      // Map velden: description->name, quantity->amount, remarks->remarks
+ 
       orderItems.push({
         name: (r.description ?? '').trim(),
         amount: Number(r.quantity ?? 0),
         unit: r.unit ?? null,
+        amountType: r.amountType ?? null,
         remarks: r.remarks ?? null,
       });
     });
@@ -38,13 +38,12 @@ export class AddOrderComponent {
       return;
     }
 
-    // Payload exact zoals je C# model het verwacht (inclusief 'remarkts' typo)
     const payload = {
       name: v.name,
       goalActivity: v.goalActivity,
-      timing: v.timing || null,     // beter ISO string gebruiken
+      timing: v.timing || null,
       location: v.location || null,
-      remarkts: v.comment || null,  // let op: API heeft 'Remarkts' gespeld
+      remarks: v.comment || null,  
       responsibleName: v.nameResponsible,
       responsibleEmail: v.emailResponsible,
       responsiblePhone: v.phoneResponsible,

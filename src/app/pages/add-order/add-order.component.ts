@@ -57,7 +57,17 @@ export class AddOrderComponent {
       valueGetter: (p) => p.node?.rowPinned ? '' : ((p.node?.rowIndex ?? 0) + 1),
     },
     { field: 'description', headerName: 'Omschrijving materiaal', editable: true, minWidth: 160 },
-    { field: 'amount', headerName: 'Aantal', editable: true, width: 110 },
+    { field: 'amount', 
+      headerName: 'Aantal', 
+      editable: true, 
+      width: 110,
+      valueParser: params => {
+        if (params.newValue == null) return null;
+        const normalized = params.newValue.replace(',', '.');
+        const num = parseFloat(normalized);
+        return isNaN(num) ? null : num;
+      } 
+    },
     { 
       field: 'unit', 
       headerName: 'Unit', 
