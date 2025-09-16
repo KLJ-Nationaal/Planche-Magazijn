@@ -48,7 +48,7 @@ jobs:
           protocol: ftp
           port: 21
           security: loose
-          local-dir: dist/magazijn-app/browser
+          local-dir: dist/magazijn-app/browser/
           server-dir: klj/
           exclude: |
             **/.git*
