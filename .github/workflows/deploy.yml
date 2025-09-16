@@ -44,7 +44,7 @@ jobs:
       - name: Write version.ts
         shell: bash
         run: |
-          cat > src/environments/version.ts << 'EOF'
+          cat > src/environments/version.ts << EOF
           export const buildInfo = {
             version: '${VERSION}',
             commit:  '${SHORT_SHA}',
