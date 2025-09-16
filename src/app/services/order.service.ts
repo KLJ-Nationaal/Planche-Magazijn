@@ -23,13 +23,13 @@ export class OrderService {
     return rows
       .filter(r =>
         (r?.description?.trim?.().length ?? 0) > 0 ||
-        r?.quantity != null ||
+        r?.amount != null ||
         (r?.unit?.trim?.().length ?? 0) > 0 ||
         (r?.remarks?.trim?.().length ?? 0) > 0
       )
       .map(r => ({
         name: (r.description ?? '').trim(),
-        amount: Number.isFinite(Number(r.quantity)) ? Number(r.quantity) : 0,
+        amount: Number.isFinite(Number(r.amount)) ? Number(r.amount) : 0,
         unit: (r.unit ?? '').toString(),
         amountType: (r.amountType ?? '').toString(),
         remarks: (r.remarks ?? '').toString(),

@@ -25,7 +25,7 @@ export class AddOrderComponent {
  
       orderItems.push({
         name: (r.description ?? '').trim(),
-        amount: Number(r.quantity ?? 0),
+        amount: Number(r.amount ?? 0),
         unit: r.unit ?? null,
         amountType: r.amountType ?? null,
         remarks: r.remarks ?? null,

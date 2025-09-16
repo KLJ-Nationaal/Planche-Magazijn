@@ -61,12 +61,12 @@ export class AddOrderComponent {
       headerName: 'Aantal', 
       editable: true, 
       width: 110,
-      valueParser: params => {
-        if (params.newValue == null) return null;
-        const normalized = params.newValue.replace(',', '.');
-        const num = parseFloat(normalized);
-        return isNaN(num) ? null : num;
-      } 
+      valueFormatter: p => this.formatBeNumber(p.value),
+      valueParser: p => this.parseBeNumber(p.newValue),
+      filter: 'agNumberColumnFilter',
+      cellEditorParams: {
+        allowedCharPattern: '[0-9\\,\\.]',
+      }
     },
     { 
       field: 'unit', 
@@ -173,5 +173,39 @@ export class AddOrderComponent {
         },
         complete: () => { this.saving = false; }
       });
-  }
+    }
+
+    parseBeNumber(raw: unknown): number | null {
+      if (raw == null) return null;
+      let s = String(raw).trim();
+      if (!s) return null;
+
+      // remove spaces used as thousand sep
+      s = s.replace(/\s+/g, '');
+
+      const hasDot = s.includes('.');
+      const hasComma = s.includes(',');
+
+      if (hasDot && hasComma) {
+        // last separator is the decimal; strip the other as thousands
+        const lastDot = s.lastIndexOf('.');
+        const lastComma = s.lastIndexOf(',');
+        if (lastComma > lastDot) {
+          s = s.replace(/\./g, '').replace(',', '.'); // comma decimal
+        } else {
+          s = s.replace(/,/g, ''); // dot decimal, remove commas as thousands
+        }
+      } else if (hasComma) {
+        s = s.replace(',', '.'); // single comma = decimal
+      }
+      const n = Number(s);
+      return Number.isFinite(n) ? n : null;
+    }
+
+    formatBeNumber(v: unknown): string {
+      if (v == null || v === '') return '';
+      const n = typeof v === 'number' ? v : Number(v);
+      if (!Number.isFinite(n)) return '';
+      return n.toLocaleString('nl-BE', { maximumFractionDigits: 2 });
+    }
 }
