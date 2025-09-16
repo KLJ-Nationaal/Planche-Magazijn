@@ -9,6 +9,6 @@ export class OrderHttp {
   private readonly API_BASE = environment.apiBaseUrl;
 
   add(order: Order) {
-    return this.http.post<{ id: number }>(`${this.API_BASE}/orders/add`, order);
+    return this.http.post<{ id: number }>(`${this.API_BASE}/orders/`, order);
   }
 }
