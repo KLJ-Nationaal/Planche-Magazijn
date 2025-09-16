@@ -26,8 +26,8 @@ jobs:
         id: version
         run: 
           RAW="${GITHUB_REF_NAME}"
-          CLEAN="${RAW#v}")
-          echo "VERSION=$CLEAN" >> $GITHUB_ENV
+          CLEAN="${RAW#v}"
+          echo "VERSION=$CLEAN" >> "$GITHUB_ENV"
           echo "SHORT_SHA=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
           echo "BUILD_DATE=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> $GITHUB_ENV
 
