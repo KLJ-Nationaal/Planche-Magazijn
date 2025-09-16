@@ -45,7 +45,8 @@ jobs:
           server:   ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          protocol: sftps
+          protocol: ftps
+          passive: true
           local-dir: dist/magazijn-app/
           server-dir: klj/
           exclude: |
