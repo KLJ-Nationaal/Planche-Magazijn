@@ -27,13 +27,20 @@ jobs:
         run: 
           RAW="${GITHUB_REF_NAME}"
           CLEAN="${RAW#v}"
+           if [ -z "$CLEAN" ]; then CLEAN="$(node -p "require('./package.json').version")"; fi
           echo "VERSION=$CLEAN" >> "$GITHUB_ENV"
-          echo "SHORT_SHA=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
-          echo "BUILD_DATE=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> $GITHUB_ENV
+          echo "SHORT_SHA=$(git rev-parse --short HEAD)" >> "$GITHUB_ENV"
+          echo "BUILD_DATE=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_ENV"
 
       - name: Write version.ts
         run: |
-          echo "export const buildInfo = { version: '${VERSION}', commit: '${SHORT_SHA}', date: '${BUILD_DATE}' };" > src/environments/version.ts
+          cat > src/environments/version.ts << 'EOF'
+          export const buildInfo = {
+            version: '${VERSION}',
+            commit: '${SHORT_SHA}',
+            date:   '${BUILD_DATE}'
+          };
+          EOF
 
       - name: Build Angular (prod)
         run: npm run build -- --configuration production
