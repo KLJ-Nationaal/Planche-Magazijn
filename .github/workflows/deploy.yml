@@ -22,23 +22,33 @@ jobs:
 
       - run: npm ci
 
-      - name: Extract version from tag
-        id: version
-        run: 
+      - name: Derive version vars
+        shell: bash
+        run: |
           RAW="${GITHUB_REF_NAME}"
           CLEAN="${RAW#v}"
-           if [ -z "$CLEAN" ]; then CLEAN="$(node -p "require('./package.json').version")"; fi
+          if [ -z "$CLEAN" ]; then
+            CLEAN="$(node -p "require('./package.json').version")"
+          fi
           echo "VERSION=$CLEAN" >> "$GITHUB_ENV"
           echo "SHORT_SHA=$(git rev-parse --short HEAD)" >> "$GITHUB_ENV"
           echo "BUILD_DATE=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_ENV"
 
+      - name: Debug env
+        shell: bash
+        run: |
+          echo "VERSION=$VERSION"
+          echo "SHORT_SHA=$SHORT_SHA"
+          echo "BUILD_DATE=$BUILD_DATE"
+
       - name: Write version.ts
+        shell: bash
         run: |
           cat > src/environments/version.ts << 'EOF'
           export const buildInfo = {
             version: '${VERSION}',
-            commit: '${SHORT_SHA}',
-            date:   '${BUILD_DATE}'
+            commit:  '${SHORT_SHA}',
+            date:    '${BUILD_DATE}'
           };
           EOF
 
