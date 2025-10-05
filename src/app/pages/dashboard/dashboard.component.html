@@ -4,10 +4,13 @@
   Nieuwe bestelbon
 </button>
 
+<div *ngIf="loading$ | async">Laden…</div>
+<div *ngIf="(error$ | async) as err">{{ err }}</div>
+
 <ag-grid-angular
   class="ag-theme-quartz"
   style="width: 100%; height: 500px"
-  [rowData]="rowData"
   [columnDefs]="columnDefs"
->
+  [rowData]="orders$ | async"
+  [rowSelection]="'single'">
 </ag-grid-angular>

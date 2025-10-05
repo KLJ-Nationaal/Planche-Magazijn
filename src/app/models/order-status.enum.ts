@@ -1,8 +1,8 @@
 export enum OrderStatus {
-    Pending = 0,
-    Processing = 1,
-    Completed = 2,
-    Cancelled = 3
+  Pending = 'Pending',
+  Processing = 'Processing',
+  Completed = 'Completed',
+  Cancelled = 'Cancelled'
 }
 
 export const OrderStatusTranslations: Record<OrderStatus, string> = {
