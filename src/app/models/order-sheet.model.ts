@@ -4,5 +4,5 @@ export interface OrderSheet {
     id: number;
     name: string;
     responsible: string;
-    orderStatus: OrderStatus;
+    orderStatus: string;
 }
