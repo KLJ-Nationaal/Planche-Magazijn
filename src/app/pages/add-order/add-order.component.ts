@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { AgGridAngular } from 'ag-grid-angular';
 import { ColDef, GridApi, GridReadyEvent, ICellRendererParams } from 'ag-grid-community';
@@ -23,7 +24,8 @@ type Row = {
 export class AddOrderComponent {
   private fb = inject(FormBuilder);
   private gridApi!: GridApi<Row>;
-  private orderService = inject(OrderService);  
+  private orderService = inject(OrderService);
+  private router = inject(Router);
 
   rowData: Row[] = [];
   private nextId = Math.max(...this.rowData.map(r => r.id), 0) + 1;
@@ -158,14 +160,11 @@ export class AddOrderComponent {
 
     this.saving = true;
 
-    // If you want the service to format timing, pass a Date as 3rd arg (or omit)
-    this.orderService.createFrom(this.form.getRawValue(), rows /*, new Date() */)
+    this.orderService.createFrom(this.form.getRawValue(), rows)
       .subscribe({
         next: res => {
-          alert(`Order aangemaakt met id: ${res.id}`);
-          this.form.reset();
-          this.gridApi.setGridOption('rowData', []);
-          this.nextId = 1;
+          console.log(`Order aangemaakt: ${res.id}`);
+          this.router.navigate(['/dashboard']);
         },
         error: err => {
           console.error(err);
