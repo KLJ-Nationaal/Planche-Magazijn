@@ -43,7 +43,31 @@ export class DashboardComponent implements OnInit {
         cellEditor: 'agSelectCellEditor',
         cellEditorParams: { values: statusValues }, // UI shows options
         valueFormatter: p => translateOrderStatus(p.value as OrderStatus)
-      }
+      },
+      {
+          headerName: 'Actions',
+          field: 'actions',
+          width: 110,
+          editable: false,
+          cellRenderer: (p: ICellRendererParams<Row>) => {
+            if (p.node?.rowPinned) return '';
+            const btn = document.createElement('button');
+            btn.type = 'button';  
+            btn.className = 'icon-btn delete';
+            btn.title = 'Order bekijken';
+            btn.innerHTML = `<span class="material-symbols-outlined">visibility</span>`;
+            btn.addEventListener('click', (ev) => {
+              ev.stopPropagation();
+              p.api.applyTransaction({ remove: [p.data as Row] });
+            });
+            return btn;
+          },
+          onCellClicked: params => {
+            if (!params.node?.rowPinned && params.data) {
+              params.api.applyTransaction({ remove: [params.data as Row] });
+            }
+          },
+        },
     ];
 
     const request$ = this.orderHttp.me().pipe(
