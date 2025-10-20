@@ -2,7 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AuthService } from '../../http/auth.http';
+import { AuthHttp } from '../../http/auth.http';
 import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
@@ -14,7 +14,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 })
 export class LoginComponent {
   private fb = inject(FormBuilder);
-  private auth = inject(AuthService);
+  private auth = inject(AuthHttp);
   private router = inject(Router);
 
   loading = signal(false);

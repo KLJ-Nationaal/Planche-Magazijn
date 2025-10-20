@@ -1,9 +1,9 @@
 import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AgGridAngular } from 'ag-grid-angular';
 import { catchError, map, mapTo, Observable, of, shareReplay, startWith } from 'rxjs';
-import { ColDef } from 'ag-grid-community';
+import { ColDef, ICellRendererParams } from 'ag-grid-community';
 import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
 import { OrderSheet } from '../../models/order-sheet.model';
 import { OrderStatus, translateOrderStatus } from '../../models/order-status.enum';
@@ -21,6 +21,7 @@ ModuleRegistry.registerModules([AllCommunityModule]);
 })
 export class DashboardComponent implements OnInit {
   private orderHttp = inject(OrderHttp);
+  private router = inject(Router);
 
   columnDefs: ColDef<OrderSheet>[] = [];
   // Expose an observable for the async pipe
@@ -39,11 +40,29 @@ export class DashboardComponent implements OnInit {
       {
         field: 'orderStatus',
         headerName: 'Status',
-        editable: true,
+        editable: false,
         cellEditor: 'agSelectCellEditor',
         cellEditorParams: { values: statusValues }, // UI shows options
         valueFormatter: p => translateOrderStatus(p.value as OrderStatus)
-      }
+      },
+      {
+            headerName: 'Actions',
+            colId: 'actions',
+            width: 110,
+            editable: false,
+            cellRenderer: (p: ICellRendererParams<OrderSheet>) => {
+              if (p.node?.rowPinned) return '';
+              const btn = document.createElement('button');
+              btn.type = 'button';  
+              btn.className = 'icon-btn small';
+              btn.title = 'Bestelbon bekijken';
+              btn.innerHTML = `<span class="material-symbols-outlined">visibility</span>`;
+              btn.addEventListener('click', (ev) => {
+                 this.router.navigate(['/edit-order/${p.data?.id}']);
+              });
+              return btn;
+            },
+          }
     ];
 
     const request$ = this.orderHttp.me().pipe(
