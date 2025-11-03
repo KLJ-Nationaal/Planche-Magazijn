@@ -1,72 +1,55 @@
-name: Build & Deploy (on tag)
+name: Deploy Magazijn API
 
 on:
   push:
-    tags:
-      - 'v*'
-  workflow_dispatch:
+    branches:
+      - main
+  workflow_dispatch: {}
 
 jobs:
-  build-deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
-    environment: production
 
     steps:
-      - name: Checkout
+      - name: Checkout repo
         uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
         with:
-          fetch-depth: 0
-      
-      - uses: actions/setup-node@v4
-        with: { node-version: 20, cache: 'npm' }
+          dotnet-version: '8.0.x'
 
-      - run: npm ci
+      - name: Restore
+        run: dotnet restore ./Magazijn-API/Magazijn-API.csproj
 
-      - name: Derive version vars
-        shell: bash
+      - name: Build (Release)
+        run: dotnet build ./Magazijn-API/Magazijn-API.csproj --configuration Release --no-restore
+
+      # Optional: only if you actually have tests
+      - name: Test
+        run: dotnet test --configuration Release --no-build
+        continue-on-error: false
+
+      - name: Publish (self-contained output for deploy)
+        run: dotnet publish ./Magazijn-API/Magazijn-API.csproj --configuration Release --no-build --output publish
+
+      - name: Setup SSH key
         run: |
-          RAW="${GITHUB_REF_NAME}"
-          CLEAN="${RAW#v}"
-          if [ -z "$CLEAN" ]; then
-            CLEAN="$(node -p "require('./package.json').version")"
-          fi
-          echo "VERSION=$CLEAN" >> "$GITHUB_ENV"
-          echo "SHORT_SHA=$(git rev-parse --short HEAD)" >> "$GITHUB_ENV"
-          echo "BUILD_DATE=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_ENV"
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          echo "Host ${{ secrets.SSH_HOST }}
+                StrictHostKeyChecking no
+                UserKnownHostsFile=/dev/null" >> ~/.ssh/config
 
-      - name: Debug env
-        shell: bash
+      - name: Deploy to server
         run: |
-          echo "VERSION=$VERSION"
-          echo "SHORT_SHA=$SHORT_SHA"
-          echo "BUILD_DATE=$BUILD_DATE"
+          REMOTE="${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}"
+          DEST="${{ secrets.DEPLOY_PATH || '/var/www/magazijn-api' }}"
 
-      - name: Write version.ts
-        shell: bash
-        run: |
-          cat > src/environments/version.ts << EOF
-          export const buildInfo = {
-            version: '${VERSION}',
-            commit:  '${SHORT_SHA}',
-            date:    '${BUILD_DATE}'
-          };
-          EOF
+          ssh $REMOTE "rm -rf \$DEST.new && mkdir -p \$DEST.new"
+          scp -r publish/* $REMOTE:\$DEST.new/
 
-      - name: Build Angular (prod)
-        run: npm run build -- --configuration production
+          ssh $REMOTE "rm -rf \$DEST.old && mv \$DEST \$DEST.old || true && mv \$DEST.new \$DEST"
 
-      # Deploy to OVH (FTPS/SFTP/FTP)
-      - name: Deploy to OVH
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server:   ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          protocol: ftp
-          port: 21
-          security: loose
-          local-dir: dist/magazijn-app/browser/
-          server-dir: klj/
-          exclude: |
-            **/.git*
-            **/.github/**
+          ssh $REMOTE "sudo systemctl restart magazijn-api.service || true"

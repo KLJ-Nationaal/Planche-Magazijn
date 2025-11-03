@@ -94,7 +94,7 @@ export class AddOrderComponent {
     // Actions column: delete per row
     {
       headerName: 'Actions',
-      field: 'actions',
+      colId: 'actions',
       width: 110,
       editable: false,
       cellRenderer: (p: ICellRendererParams<Row>) => {

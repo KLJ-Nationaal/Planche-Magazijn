@@ -1,9 +1,10 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { AgGridAngular } from 'ag-grid-angular';
 import { ColDef, GridApi, GridReadyEvent, ICellRendererParams } from 'ag-grid-community';
 import { OrderService } from '../../services/order.service';
+import { ActivatedRoute } from '@angular/router';
 
 type Row = {
   id: number;
@@ -19,27 +20,44 @@ type Row = {
   templateUrl: './edit-order.component.html',
   styleUrl: './edit-order.component.css'
 })
-export class EditOrderComponent {
-private fb = inject(FormBuilder);
+export class EditOrderComponent implements OnInit {
+  private fb = inject(FormBuilder);
   private gridApi!: GridApi<Row>;
   private orderService = inject(OrderService);  
+  private currentRoute = inject(ActivatedRoute);
 
   rowData: Row[] = [];
   private nextId = Math.max(...this.rowData.map(r => r.id), 0) + 1;
 
   saving = false;
   errorMsg: string | null = null;
+  loading = true;
+  notFound = false;
 
   form = this.fb.group({
-    name: this.fb.control('', [Validators.required, Validators.minLength(2)]),
+    name: this.fb.control({value: '', disabled: true}),
     goalActivity: this.fb.control('', [Validators.required]),
-    timing: this.fb.control({ value: '', disabled: true }), // keep simple; change to a date validator if you like
+    timing: this.fb.control({ value: '', disabled: true }),
     location: this.fb.control({ value: '', disabled: true }),
-    nameResponsible: this.fb.control('', [Validators.required, Validators.minLength(2)]),
-    emailResponsible: this.fb.control('', [Validators.required, Validators.email]),
-    phoneResponsible: this.fb.control('', [Validators.required, Validators.pattern(/^[0-9]{8,15}$/)]),
+    nameResponsible: this.fb.control({value: '', disabled: true}),
+    emailResponsible: this.fb.control({value: '', disabled: true}),
+    phoneResponsible: this.fb.control({value: '', disabled: true}),
     comment: this.fb.control('', { nonNullable: true }),
   });
+
+  ngOnInit() {
+    const id = (Number)(this.currentRoute.snapshot.paramMap.get('id'));
+    this.orderService.getOrder(id).subscribe({
+      next: (order) => {
+        this.form.patchValue(order);
+        this.loading = false;
+      },
+      error: (err) => {
+        this.loading = false;
+        this.notFound = err.status === 404;
+      }
+    });
+  }
 
   hasError(path: string, err: string) {
     const ctrl = this.form.get(path);

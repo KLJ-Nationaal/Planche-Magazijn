@@ -1,1 +1,81 @@
-<p>edit-order works!</p>
+<form [formGroup]="form" (ngSubmit)="submit()" (keydown.enter)="$event.preventDefault()" class="form">
+  <h2>Bestelling aanpassen</h2>
+  <div class="group">
+    <div class="row two-col">
+      <div>
+        <label>
+          Naam van Bestelling
+        </label>
+        <input type="text" formControlName="name" />
+      </div>
+      <div [class.invalid]="form.get('goalActivity')?.invalid && (form.get('goalActivity')?.touched || form.get('goalActivity')?.dirty)">
+        <label>
+          Doel activiteit
+          <span class="required">*</span>
+        </label>
+        <input type="text" formControlName="goalActivity" />
+        <small *ngIf="hasError('goalActivity', 'required')">Geef een doel op.</small>
+      </div>
+    </div>
+
+    <div class="row two-col">
+      <div [class.invalid]="form.get('timing')?.invalid && (form.get('timing')?.touched || form.get('timing')?.dirty)">
+        <label>Timing</label>
+        <input type="text" formControlName="timing" />
+      </div>
+      <div [class.invalid]="form.get('location')?.invalid && (form.get('location')?.touched || form.get('location')?.dirty)">
+        <label>Locatie</label>
+        <input type="text" formControlName="location" />
+      </div>
+    </div>
+  </div>
+
+<div class="group">
+  <div class="row two-col">
+      <div>
+        <label>
+          Naam Verantwoordelijke
+        </label>
+        <input type="text" formControlName="nameResponsible" />
+      </div>
+       <div>
+        <label>
+          Email verantwoordelijke
+        </label>
+        <input type="email" formControlName="emailResponsible" />
+      </div>
+    </div>
+    <div class="row two-col">
+      <div>
+        <label>
+          Telefoonnummer Verantwoordelijke
+        </label>
+        <input type="tel" formControlName="phoneResponsible" inputmode="numeric" pattern="^\+?[0-9]{6,15}$" readonly="true" />
+      </div>
+    </div>
+</div>
+  <div class="grid-card">
+    <ag-grid-angular
+      class="ag-theme-quartz"
+      style="width: 100%; height: 520px"
+      [rowData]="rowData"
+      [columnDefs]="columnDefs"
+      [defaultColDef]="defaultColDef"
+      [stopEditingWhenCellsLoseFocus]="true"
+      (gridReady)="onGridReady($event)">
+    </ag-grid-angular>
+    <div class="grid-footer">
+      <button class="btn btn-primary btn-full" (click)="addRow(); $event.preventDefault(); $event.stopPropagation();">➕ Nieuw item</button>
+    </div>
+  </div>
+
+  <div class="row remarks">
+    <label>Algemene opmerkingen</label>
+    <textarea formControlName="comment"></textarea>
+  </div>
+
+  <div class="row actions">
+    <button type="reset" class="btn btn-secondary">Reset</button>
+    <button type="submit" class="btn btn-primary" [disabled]="form.invalid">Opslaan</button>
+  </div>
+</form>

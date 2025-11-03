@@ -13,4 +13,8 @@ export class OrderHttp extends BaseHttp {
   me() : Observable<OrderSheet[]> {
     return this.http.get<OrderSheet[]>(`${this.API_BASE}/orders/me`);
   }
+
+  getOrder(id: number) : Observable<Order> {
+    return this.http.get<Order>(`${this.API_BASE}/orders/${id}`);
+  }
 }
