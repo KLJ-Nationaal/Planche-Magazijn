@@ -9,8 +9,9 @@ import { ActivatedRoute } from '@angular/router';
 type Row = {
   id: number;
   description?: string;
-  quantity?: number | null;
+  amount?: number | null;
   unit?: string | null;
+  amountType?: string | null;
   remarks?: string | null;
 };
 
@@ -27,7 +28,7 @@ export class EditOrderComponent implements OnInit {
   private currentRoute = inject(ActivatedRoute);
 
   rowData: Row[] = [];
-  private nextId = Math.max(...this.rowData.map(r => r.id), 0) + 1;
+  private nextId = 1; 
 
   saving = false;
   errorMsg: string | null = null;
@@ -39,9 +40,9 @@ export class EditOrderComponent implements OnInit {
     goalActivity: this.fb.control('', [Validators.required]),
     timing: this.fb.control({ value: '', disabled: true }),
     location: this.fb.control({ value: '', disabled: true }),
-    nameResponsible: this.fb.control({value: '', disabled: true}),
-    emailResponsible: this.fb.control({value: '', disabled: true}),
-    phoneResponsible: this.fb.control({value: '', disabled: true}),
+    responsibleName: this.fb.control({value: '', disabled: true}),
+    responsibleEmail: this.fb.control({value: '', disabled: true}),
+    responsiblePhone: this.fb.control({value: '', disabled: true}),
     comment: this.fb.control('', { nonNullable: true }),
   });
 
@@ -50,6 +51,20 @@ export class EditOrderComponent implements OnInit {
     this.orderService.getOrder(id).subscribe({
       next: (order) => {
         this.form.patchValue(order);
+        
+        const items = (order.orderItems ?? []).map((it: any, idx: number): Row => ({
+          id: it.id ?? (idx + 1),
+          description: it.description ?? it.name ?? '',
+          amount: it.amount ?? it.quantity ?? null,
+          unit: it.unit ?? null,
+          amountType: it.amountType ?? null,
+          remarks: it.remarks ?? null,
+        }));
+
+        this.rowData = items;
+        const maxId = items.reduce((m, r) => Math.max(m, r.id ?? 0), 0);
+        this.nextId = maxId + 1;
+
         this.loading = false;
       },
       error: (err) => {
@@ -140,7 +155,10 @@ export class EditOrderComponent implements OnInit {
   }
 
   addRow() {
-    const blank: Row = { id: this.nextId++, description: '', quantity: null, unit: null };
+    const maxId = this.rowData.reduce((m, r) => Math.max(m, r.id ?? 0), 0);
+    this.nextId = Math.max(this.nextId, maxId + 1);
+
+    const blank: Row = { id: this.nextId++, description: '', amount: null, unit: null };
     this.gridApi.applyTransaction({ add: [blank] });
 
     const idx = this.gridApi.getDisplayedRowCount() - 1;

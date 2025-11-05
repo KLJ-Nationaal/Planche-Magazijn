@@ -38,9 +38,9 @@ export class AddOrderComponent {
     goalActivity: this.fb.control('', [Validators.required]),
     timing: this.fb.control({ value: '', disabled: true }), // keep simple; change to a date validator if you like
     location: this.fb.control({ value: '', disabled: true }),
-    nameResponsible: this.fb.control('', [Validators.required, Validators.minLength(2)]),
-    emailResponsible: this.fb.control('', [Validators.required, Validators.email]),
-    phoneResponsible: this.fb.control('', [Validators.required, Validators.pattern(/^[0-9]{8,15}$/)]),
+    responsibleName: this.fb.control('', [Validators.required, Validators.minLength(2)]),
+    responsibleEmail: this.fb.control('', [Validators.required, Validators.email]),
+    responsiblePhone: this.fb.control('', [Validators.required, Validators.pattern(/^[0-9]{8,15}$/)]),
     comment: this.fb.control('', { nonNullable: true }),
   });
 
