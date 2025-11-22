@@ -1,7 +1,8 @@
 export type OrderItem = {
+  id: number;
   name: string;
-  amount: number;
-  unit: string;
-  amountType: string;
-  remarks: string;
+  amount: number | null;
+  unit: string | null;
+  amountType: string | null;
+  remarks: string | null;
 };

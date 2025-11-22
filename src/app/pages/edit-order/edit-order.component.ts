@@ -5,14 +5,7 @@ import { AgGridAngular } from 'ag-grid-angular';
 import { ColDef, GridApi, GridReadyEvent, ICellRendererParams } from 'ag-grid-community';
 import { OrderService } from '../../services/order.service';
 import { ActivatedRoute } from '@angular/router';
-
-type Row = {
-  id: number;
-  description?: string;
-  quantity?: number | null;
-  unit?: string | null;
-  remarks?: string | null;
-};
+import { OrderItem } from '../../models/order-item.model';
 
 @Component({
   selector: 'app-edit-order',
@@ -22,11 +15,11 @@ type Row = {
 })
 export class EditOrderComponent implements OnInit {
   private fb = inject(FormBuilder);
-  private gridApi!: GridApi<Row>;
+  private gridApi!: GridApi<OrderItem>;
   private orderService = inject(OrderService);  
   private currentRoute = inject(ActivatedRoute);
 
-  rowData: Row[] = [];
+  rowData: OrderItem[] = [];
   private nextId = Math.max(...this.rowData.map(r => r.id), 0) + 1;
 
   saving = false;
@@ -50,6 +43,7 @@ export class EditOrderComponent implements OnInit {
     this.orderService.getOrder(id).subscribe({
       next: (order) => {
         this.form.patchValue(order);
+        this.rowData = order.orderItems ?? [];
         this.loading = false;
       },
       error: (err) => {
@@ -64,16 +58,17 @@ export class EditOrderComponent implements OnInit {
     return !!ctrl && ctrl.touched && ctrl.hasError(err);
   }
 
-  columnDefs: ColDef<Row | any>[] = [
+  columnDefs: ColDef<OrderItem | any>[] = 
+  [
     { 
-       headerName: 'Nummer',
+      headerName: 'Nummer',
       width: 90,
       editable: false,
       sortable: false,
       filter: false,
       valueGetter: (p) => p.node?.rowPinned ? '' : ((p.node?.rowIndex ?? 0) + 1),
     },
-    { field: 'description', headerName: 'Omschrijving materiaal', editable: true, minWidth: 160 },
+    { field: 'name', headerName: 'Omschrijving materiaal', editable: true, minWidth: 160 },
     { field: 'amount', 
       headerName: 'Aantal', 
       editable: true, 
@@ -112,7 +107,7 @@ export class EditOrderComponent implements OnInit {
       colId: 'actions',
       width: 110,
       editable: false,
-      cellRenderer: (p: ICellRendererParams<Row>) => {
+      cellRenderer: (p: ICellRendererParams<OrderItem>) => {
         if (p.node?.rowPinned) return '';
         const btn = document.createElement('button');
         btn.type = 'button';  
@@ -121,13 +116,13 @@ export class EditOrderComponent implements OnInit {
         btn.innerHTML = `<span class="material-symbols-outlined">delete</span>`;
         btn.addEventListener('click', (ev) => {
           ev.stopPropagation();
-          p.api.applyTransaction({ remove: [p.data as Row] });
+          p.api.applyTransaction({ remove: [p.data as OrderItem] });
         });
         return btn;
       },
       onCellClicked: params => {
         if (!params.node?.rowPinned && params.data) {
-          params.api.applyTransaction({ remove: [params.data as Row] });
+          params.api.applyTransaction({ remove: [params.data as OrderItem] });
         }
       },
     },
@@ -135,22 +130,22 @@ export class EditOrderComponent implements OnInit {
 
   defaultColDef: ColDef = { resizable: true, sortable: true, filter: true };
 
-  onGridReady(e: GridReadyEvent<Row>) {
+  onGridReady(e: GridReadyEvent<OrderItem>) {
     this.gridApi = e.api;
   }
 
   addRow() {
-    const blank: Row = { id: this.nextId++, description: '', quantity: null, unit: null };
+    const blank: OrderItem = { id: this.nextId++, name: '', amount: null, unit: null, amountType: null, remarks: null };
     this.gridApi.applyTransaction({ add: [blank] });
 
     const idx = this.gridApi.getDisplayedRowCount() - 1;
-    this.gridApi.setFocusedCell(idx, 'description');
-    this.gridApi.startEditingCell({ rowIndex: idx, colKey: 'description' });
+    this.gridApi.setFocusedCell(idx, 'name');
+    this.gridApi.startEditingCell({ rowIndex: idx, colKey: 'name' });
   }
 
-  private getRows(): Row[] {
-    const rows: Row[] = [];
-    this.gridApi.forEachNode(n => { if (!n.rowPinned) rows.push(n.data as Row); });
+  private getRows(): OrderItem[] {
+    const rows: OrderItem[] = [];
+    this.gridApi.forEachNode(n => { if (!n.rowPinned) rows.push(n.data as OrderItem); });
     return rows;
   }
 

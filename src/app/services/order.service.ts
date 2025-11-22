@@ -9,21 +9,13 @@ export class OrderService {
     private orderHttp = inject(OrderHttp);
     private dateHelper = inject(DateHelper);
 
-  public mapRowsToItems(rows: any[]): OrderItem[] {
-    return rows
-      .filter(r =>
-        (r?.description?.trim?.().length ?? 0) > 0 ||
-        r?.amount != null ||
-        (r?.unit?.trim?.().length ?? 0) > 0 ||
-        (r?.remarks?.trim?.().length ?? 0) > 0
-      )
-      .map(r => ({
-        name: (r.description ?? '').trim(),
-        amount: Number.isFinite(Number(r.amount)) ? Number(r.amount) : 0,
-        unit: (r.unit ?? '').toString(),
-        amountType: (r.amountType ?? '').toString(),
-        remarks: (r.remarks ?? '').toString(),
-      }));
+  public mapRowsToItems(items: OrderItem[]): OrderItem[] {
+      return items.filter(i =>
+        (i.name?.trim().length ?? 0) > 0 ||
+        i.amount != null ||
+        (i.unit?.trim().length ?? 0) > 0 ||
+        (i.remarks?.trim().length ?? 0) > 0
+      );
   }
 
   public buildOrder(formRaw: any, items: OrderItem[], timing?: Date | string): Order {

@@ -5,14 +5,7 @@ import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { AgGridAngular } from 'ag-grid-angular';
 import { ColDef, GridApi, GridReadyEvent, ICellRendererParams } from 'ag-grid-community';
 import { OrderService } from '../../services/order.service';
-
-type Row = {
-  id: number;
-  description?: string;
-  quantity?: number | null;
-  unit?: string | null;
-  remarks?: string | null;
-};
+import { OrderItem } from '../../models/order-item.model';
 
 @Component({
   selector: 'app-add-order',
@@ -23,11 +16,11 @@ type Row = {
 })
 export class AddOrderComponent {
   private fb = inject(FormBuilder);
-  private gridApi!: GridApi<Row>;
+  private gridApi!: GridApi<OrderItem>;
   private orderService = inject(OrderService);
   private router = inject(Router);
 
-  rowData: Row[] = [];
+  rowData: OrderItem[] = [];
   private nextId = Math.max(...this.rowData.map(r => r.id), 0) + 1;
 
   saving = false;
@@ -49,9 +42,9 @@ export class AddOrderComponent {
     return !!ctrl && ctrl.touched && ctrl.hasError(err);
   }
 
-  columnDefs: ColDef<Row | any>[] = [
+  columnDefs: ColDef<OrderItem | any>[] = [
     { 
-       headerName: 'Nummer',
+      headerName: 'Nummer',
       width: 90,
       editable: false,
       sortable: false,
@@ -97,7 +90,7 @@ export class AddOrderComponent {
       colId: 'actions',
       width: 110,
       editable: false,
-      cellRenderer: (p: ICellRendererParams<Row>) => {
+      cellRenderer: (p: ICellRendererParams<OrderItem>) => {
         if (p.node?.rowPinned) return '';
         const btn = document.createElement('button');
         btn.type = 'button';  
@@ -106,13 +99,13 @@ export class AddOrderComponent {
         btn.innerHTML = `<span class="material-symbols-outlined">delete</span>`;
         btn.addEventListener('click', (ev) => {
           ev.stopPropagation();
-          p.api.applyTransaction({ remove: [p.data as Row] });
+          p.api.applyTransaction({ remove: [p.data as OrderItem] });
         });
         return btn;
       },
       onCellClicked: params => {
         if (!params.node?.rowPinned && params.data) {
-          params.api.applyTransaction({ remove: [params.data as Row] });
+          params.api.applyTransaction({ remove: [params.data as OrderItem] });
         }
       },
     },
@@ -120,12 +113,12 @@ export class AddOrderComponent {
 
   defaultColDef: ColDef = { resizable: true, sortable: true, filter: true };
 
-  onGridReady(e: GridReadyEvent<Row>) {
+  onGridReady(e: GridReadyEvent<OrderItem>) {
     this.gridApi = e.api;
   }
 
   addRow() {
-    const blank: Row = { id: this.nextId++, description: '', quantity: null, unit: null };
+    const blank: OrderItem = { id: this.nextId++, name: '', amount: null, unit: null, amountType: null, remarks: null };
     this.gridApi.applyTransaction({ add: [blank] });
 
     const idx = this.gridApi.getDisplayedRowCount() - 1;
@@ -133,9 +126,9 @@ export class AddOrderComponent {
     this.gridApi.startEditingCell({ rowIndex: idx, colKey: 'description' });
   }
 
-  private getRows(): Row[] {
-    const rows: Row[] = [];
-    this.gridApi.forEachNode(n => { if (!n.rowPinned) rows.push(n.data as Row); });
+  private getRows(): OrderItem[] {
+    const rows: OrderItem[] = [];
+    this.gridApi.forEachNode(n => { if (!n.rowPinned) rows.push(n.data as OrderItem); });
     return rows;
   }
 
