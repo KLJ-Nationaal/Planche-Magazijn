@@ -30,9 +30,9 @@ export class OrderService {
       timing: timingStr,
       location: formRaw?.location ?? '',
       remarks: formRaw?.comment ?? '',
-      responsibleName: formRaw?.nameResponsible ?? '',
-      responsibleEmail: formRaw?.emailResponsible ?? '',
-      responsiblePhone: formRaw?.phoneResponsible ?? '',
+      responsibleName: formRaw?.responsibleName ?? '',
+      responsibleEmail: formRaw?.responsibleEmail ?? '',
+      responsiblePhone: formRaw?.responsiblePhone ?? '',
       orderItems: items,
     };
   }

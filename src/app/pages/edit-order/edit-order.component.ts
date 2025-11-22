@@ -32,9 +32,9 @@ export class EditOrderComponent implements OnInit {
     goalActivity: this.fb.control('', [Validators.required]),
     timing: this.fb.control({ value: '', disabled: true }),
     location: this.fb.control({ value: '', disabled: true }),
-    nameResponsible: this.fb.control({value: '', disabled: true}),
-    emailResponsible: this.fb.control({value: '', disabled: true}),
-    phoneResponsible: this.fb.control({value: '', disabled: true}),
+    responsibleName: this.fb.control({value: '', disabled: true}),
+    responsibleEmail: this.fb.control({value: '', disabled: true}),
+    responsiblePhone: this.fb.control({value: '', disabled: true}),
     comment: this.fb.control('', { nonNullable: true }),
   });
 
