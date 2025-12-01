@@ -6,8 +6,8 @@ import { DateHelper } from '../helpers/date.helper';
 
 @Injectable({ providedIn: 'root' })
 export class OrderService {
-    private orderHttp = inject(OrderHttp);
-    private dateHelper = inject(DateHelper);
+  private orderHttp = inject(OrderHttp);
+  private dateHelper = inject(DateHelper);
 
   public mapRowsToItems(items: OrderItem[]): OrderItem[] {
       return items.filter(i =>
@@ -37,10 +37,16 @@ export class OrderService {
     };
   }
 
-  public createFrom(formRaw: any, rows: any[], timing?: Date | string) {
+  public newOrder(formRaw: any, rows: any[], timing?: Date | string) {
     const items = this.mapRowsToItems(rows);
     const dto = this.buildOrder(formRaw, items, timing);
     return this.orderHttp.add(dto);
+  }
+
+  public saveOrder(formRaw: any, rows: any[], timing?: Date | string) {
+    const items = this.mapRowsToItems(rows);
+    const dto = this.buildOrder(formRaw, items, timing);
+    return this.orderHttp.save(dto);
   }
 
   public getOrder(id: number) {

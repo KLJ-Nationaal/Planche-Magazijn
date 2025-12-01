@@ -21,7 +21,6 @@ export class AddOrderComponent {
   private router = inject(Router);
 
   rowData: OrderItem[] = [];
-  private nextId = Math.max(...this.rowData.map(r => r.id), 0) + 1;
 
   saving = false;
   errorMsg: string | null = null;
@@ -118,7 +117,7 @@ export class AddOrderComponent {
   }
 
   addRow() {
-    const blank: OrderItem = { id: this.nextId++, name: '', amount: null, unit: null, amountType: null, remarks: null };
+    const blank: OrderItem = { id: 0, name: '', amount: null, unit: null, amountType: null, remarks: null };
     this.gridApi.applyTransaction({ add: [blank] });
 
     const idx = this.gridApi.getDisplayedRowCount() - 1;
@@ -153,7 +152,7 @@ export class AddOrderComponent {
 
     this.saving = true;
 
-    this.orderService.createFrom(this.form.getRawValue(), rows)
+    this.orderService.newOrder(this.form.getRawValue(), rows)
       .subscribe({
         next: res => {
           console.log(`Order aangemaakt: ${res.id}`);

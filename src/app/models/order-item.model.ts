@@ -5,4 +5,5 @@ export type OrderItem = {
   unit: string | null;
   amountType: string | null;
   remarks: string | null;
+  deleted?: boolean;
 };

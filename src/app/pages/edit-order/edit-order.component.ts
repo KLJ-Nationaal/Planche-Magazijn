@@ -4,7 +4,7 @@ import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { AgGridAngular } from 'ag-grid-angular';
 import { ColDef, GridApi, GridReadyEvent, ICellRendererParams } from 'ag-grid-community';
 import { OrderService } from '../../services/order.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { OrderItem } from '../../models/order-item.model';
 
 @Component({
@@ -18,9 +18,10 @@ export class EditOrderComponent implements OnInit {
   private gridApi!: GridApi<OrderItem>;
   private orderService = inject(OrderService);  
   private currentRoute = inject(ActivatedRoute);
+  private router = inject(Router);
 
+  orderItems: OrderItem[] = []; 
   rowData: OrderItem[] = [];
-  private nextId = Math.max(...this.rowData.map(r => r.id), 0) + 1;
 
   saving = false;
   errorMsg: string | null = null;
@@ -42,9 +43,12 @@ export class EditOrderComponent implements OnInit {
     const id = (Number)(this.currentRoute.snapshot.paramMap.get('id'));
     this.orderService.getOrder(id).subscribe({
       next: (order) => {
-        this.form.patchValue(order);
-        this.rowData = order.orderItems ?? [];
-        this.loading = false;
+      this.form.patchValue(order);
+
+      this.orderItems = order.orderItems ?? [];
+
+      this.refreshGrid();
+      this.loading = false;
       },
       error: (err) => {
         this.loading = false;
@@ -116,14 +120,19 @@ export class EditOrderComponent implements OnInit {
         btn.innerHTML = `<span class="material-symbols-outlined">delete</span>`;
         btn.addEventListener('click', (ev) => {
           ev.stopPropagation();
-          p.api.applyTransaction({ remove: [p.data as OrderItem] });
+          const item = p.data as OrderItem;
+
+          if (!item.id || item.id === 0) {
+            // New row → remove completely
+            this.orderItems = this.orderItems.filter(i => i !== item);
+          } else {
+            // Existing row → soft delete
+            item.deleted = true;
+          }
+
+          this.refreshGrid();
         });
         return btn;
-      },
-      onCellClicked: params => {
-        if (!params.node?.rowPinned && params.data) {
-          params.api.applyTransaction({ remove: [params.data as OrderItem] });
-        }
       },
     },
   ];
@@ -132,21 +141,36 @@ export class EditOrderComponent implements OnInit {
 
   onGridReady(e: GridReadyEvent<OrderItem>) {
     this.gridApi = e.api;
+    this.refreshGrid(); 
   }
 
   addRow() {
-    const blank: OrderItem = { id: this.nextId++, name: '', amount: null, unit: null, amountType: null, remarks: null };
-    this.gridApi.applyTransaction({ add: [blank] });
+    const blank: OrderItem = { id: 0, name: '', amount: null, unit: null, amountType: null, remarks: null };
+    this.orderItems.push(blank);
+    this.refreshGrid();
 
-    const idx = this.gridApi.getDisplayedRowCount() - 1;
-    this.gridApi.setFocusedCell(idx, 'name');
-    this.gridApi.startEditingCell({ rowIndex: idx, colKey: 'name' });
+    let rowIndex = -1;
+    this.gridApi.forEachNode((node, idx) => {
+      if (node.data === blank) rowIndex = idx;
+    });
+
+    if (rowIndex >= 0) {
+      this.gridApi.setFocusedCell(rowIndex, 'name');
+      this.gridApi.startEditingCell({ rowIndex, colKey: 'name' });
+    }
   }
 
   private getRows(): OrderItem[] {
     const rows: OrderItem[] = [];
     this.gridApi.forEachNode(n => { if (!n.rowPinned) rows.push(n.data as OrderItem); });
     return rows;
+  }
+
+  private refreshGrid() {
+    this.rowData = this.orderItems.filter(i => !i.deleted); 
+    if (this.gridApi) {
+      this.gridApi.setGridOption('rowData', this.rowData);
+    }
   }
 
   submit() {
@@ -171,13 +195,11 @@ export class EditOrderComponent implements OnInit {
     this.saving = true;
 
     // If you want the service to format timing, pass a Date as 3rd arg (or omit)
-    this.orderService.createFrom(this.form.getRawValue(), rows /*, new Date() */)
+    this.orderService.saveOrder(this.form.getRawValue(), this.orderItems)
       .subscribe({
         next: res => {
-          alert(`Order aangemaakt met id: ${res.id}`);
-          this.form.reset();
-          this.gridApi.setGridOption('rowData', []);
-          this.nextId = 1;
+          alert(`Order is opgeslagen...`);
+          this.router.navigate(['/dashboard']);
         },
         error: err => {
           console.error(err);

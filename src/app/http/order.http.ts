@@ -10,6 +10,10 @@ export class OrderHttp extends BaseHttp {
     return this.http.post<{ id: number }>(`${this.API_BASE}/orders/`, order);
   }
 
+  save(order: Order) {
+    return this.http.post(`${this.API_BASE}/orders/update`, order);
+  }
+
   me() : Observable<OrderSheet[]> {
     return this.http.get<OrderSheet[]>(`${this.API_BASE}/orders/me`);
   }
