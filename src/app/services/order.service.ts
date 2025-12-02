@@ -25,6 +25,7 @@ export class OrderService {
       (formRaw?.timing ?? '');
 
     return {
+      id: formRaw?.id ?? 0,
       name: formRaw?.name ?? '',
       goalActivity: formRaw?.goalActivity ?? '',
       timing: timingStr,

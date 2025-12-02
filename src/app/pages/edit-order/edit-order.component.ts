@@ -29,6 +29,7 @@ export class EditOrderComponent implements OnInit {
   notFound = false;
 
   form = this.fb.group({
+    id: this.fb.control<number | null>(null),
     name: this.fb.control({value: '', disabled: true}),
     goalActivity: this.fb.control('', [Validators.required]),
     timing: this.fb.control({ value: '', disabled: true }),
