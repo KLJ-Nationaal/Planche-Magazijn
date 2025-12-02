@@ -1,47 +1,69 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { AgGridAngular } from 'ag-grid-angular';
 import { ColDef, GridApi, GridReadyEvent, ICellRendererParams } from 'ag-grid-community';
 import { OrderService } from '../../services/order.service';
+import { ActivatedRoute, Router } from '@angular/router';
 import { OrderItem } from '../../models/order-item.model';
 
 @Component({
-  selector: 'app-add-order',
-  standalone: true,
+  selector: 'app-edit-order',
   imports: [CommonModule, ReactiveFormsModule, AgGridAngular],
-  templateUrl: './add-order.component.html',
-  styleUrls: ['./add-order.component.css'],
+  templateUrl: './edit-order.component.html',
+  styleUrl: './edit-order.component.css'
 })
-export class AddOrderComponent {
+export class EditOrderComponent implements OnInit {
   private fb = inject(FormBuilder);
   private gridApi!: GridApi<OrderItem>;
-  private orderService = inject(OrderService);
+  private orderService = inject(OrderService);  
+  private currentRoute = inject(ActivatedRoute);
   private router = inject(Router);
 
+  orderItems: OrderItem[] = []; 
   rowData: OrderItem[] = [];
 
   saving = false;
   errorMsg: string | null = null;
+  loading = true;
+  notFound = false;
 
   form = this.fb.group({
-    name: this.fb.control('', [Validators.required, Validators.minLength(2)]),
+    name: this.fb.control({value: '', disabled: true}),
     goalActivity: this.fb.control('', [Validators.required]),
-    timing: this.fb.control({ value: '', disabled: true }), // keep simple; change to a date validator if you like
+    timing: this.fb.control({ value: '', disabled: true }),
     location: this.fb.control({ value: '', disabled: true }),
-    responsibleName: this.fb.control('', [Validators.required, Validators.minLength(2)]),
-    responsibleEmail: this.fb.control('', [Validators.required, Validators.email]),
-    responsiblePhone: this.fb.control('', [Validators.required, Validators.pattern(/^[0-9]{8,15}$/)]),
+    responsibleName: this.fb.control({value: '', disabled: true}),
+    responsibleEmail: this.fb.control({value: '', disabled: true}),
+    responsiblePhone: this.fb.control({value: '', disabled: true}),
     comment: this.fb.control('', { nonNullable: true }),
   });
+
+  ngOnInit() {
+    const id = (Number)(this.currentRoute.snapshot.paramMap.get('id'));
+    this.orderService.getOrder(id).subscribe({
+      next: (order) => {
+      this.form.patchValue(order);
+
+      this.orderItems = order.orderItems ?? [];
+
+      this.refreshGrid();
+      this.loading = false;
+      },
+      error: (err) => {
+        this.loading = false;
+        this.notFound = err.status === 404;
+      }
+    });
+  }
 
   hasError(path: string, err: string) {
     const ctrl = this.form.get(path);
     return !!ctrl && ctrl.touched && ctrl.hasError(err);
   }
 
-  columnDefs: ColDef<OrderItem | any>[] = [
+  columnDefs: ColDef<OrderItem | any>[] = 
+  [
     { 
       headerName: 'Nummer',
       width: 90,
@@ -50,17 +72,17 @@ export class AddOrderComponent {
       filter: false,
       valueGetter: (p) => p.node?.rowPinned ? '' : ((p.node?.rowIndex ?? 0) + 1),
     },
-    { field: 'description', headerName: 'Omschrijving materiaal', editable: true, minWidth: 160 },
+    { field: 'name', headerName: 'Omschrijving materiaal', editable: true, minWidth: 160 },
     { field: 'amount', 
       headerName: 'Aantal', 
       editable: true, 
       width: 110,
-      valueFormatter: p => this.formatBeNumber(p.value),
-      valueParser: p => this.parseBeNumber(p.newValue),
-      filter: 'agNumberColumnFilter',
-      cellEditorParams: {
-        allowedCharPattern: '[0-9\\,\\.]',
-      }
+      valueParser: params => {
+        if (params.newValue == null) return null;
+        const normalized = params.newValue.replace(',', '.');
+        const num = parseFloat(normalized);
+        return isNaN(num) ? null : num;
+      } 
     },
     { 
       field: 'unit', 
@@ -98,14 +120,19 @@ export class AddOrderComponent {
         btn.innerHTML = `<span class="material-symbols-outlined">delete</span>`;
         btn.addEventListener('click', (ev) => {
           ev.stopPropagation();
-          p.api.applyTransaction({ remove: [p.data as OrderItem] });
+          const item = p.data as OrderItem;
+
+          if (!item.id || item.id === 0) {
+            // New row → remove completely
+            this.orderItems = this.orderItems.filter(i => i !== item);
+          } else {
+            // Existing row → soft delete
+            item.deleted = true;
+          }
+
+          this.refreshGrid();
         });
         return btn;
-      },
-      onCellClicked: params => {
-        if (!params.node?.rowPinned && params.data) {
-          params.api.applyTransaction({ remove: [params.data as OrderItem] });
-        }
       },
     },
   ];
@@ -114,21 +141,36 @@ export class AddOrderComponent {
 
   onGridReady(e: GridReadyEvent<OrderItem>) {
     this.gridApi = e.api;
+    this.refreshGrid(); 
   }
 
   addRow() {
     const blank: OrderItem = { id: 0, name: '', amount: null, unit: null, amountType: null, remarks: null };
-    this.gridApi.applyTransaction({ add: [blank] });
+    this.orderItems.push(blank);
+    this.refreshGrid();
 
-    const idx = this.gridApi.getDisplayedRowCount() - 1;
-    this.gridApi.setFocusedCell(idx, 'description');
-    this.gridApi.startEditingCell({ rowIndex: idx, colKey: 'description' });
+    let rowIndex = -1;
+    this.gridApi.forEachNode((node, idx) => {
+      if (node.data === blank) rowIndex = idx;
+    });
+
+    if (rowIndex >= 0) {
+      this.gridApi.setFocusedCell(rowIndex, 'name');
+      this.gridApi.startEditingCell({ rowIndex, colKey: 'name' });
+    }
   }
 
   private getRows(): OrderItem[] {
     const rows: OrderItem[] = [];
     this.gridApi.forEachNode(n => { if (!n.rowPinned) rows.push(n.data as OrderItem); });
     return rows;
+  }
+
+  private refreshGrid() {
+    this.rowData = this.orderItems.filter(i => !i.deleted); 
+    if (this.gridApi) {
+      this.gridApi.setGridOption('rowData', this.rowData);
+    }
   }
 
   submit() {
@@ -152,10 +194,11 @@ export class AddOrderComponent {
 
     this.saving = true;
 
-    this.orderService.newOrder(this.form.getRawValue(), rows)
+    // If you want the service to format timing, pass a Date as 3rd arg (or omit)
+    this.orderService.saveOrder(this.form.getRawValue(), this.orderItems)
       .subscribe({
         next: res => {
-          console.log(`Order aangemaakt: ${res.id}`);
+          alert(`Order is opgeslagen...`);
           this.router.navigate(['/dashboard']);
         },
         error: err => {
@@ -164,39 +207,5 @@ export class AddOrderComponent {
         },
         complete: () => { this.saving = false; }
       });
-    }
-
-    parseBeNumber(raw: unknown): number | null {
-      if (raw == null) return null;
-      let s = String(raw).trim();
-      if (!s) return null;
-
-      // remove spaces used as thousand sep
-      s = s.replace(/\s+/g, '');
-
-      const hasDot = s.includes('.');
-      const hasComma = s.includes(',');
-
-      if (hasDot && hasComma) {
-        // last separator is the decimal; strip the other as thousands
-        const lastDot = s.lastIndexOf('.');
-        const lastComma = s.lastIndexOf(',');
-        if (lastComma > lastDot) {
-          s = s.replace(/\./g, '').replace(',', '.'); // comma decimal
-        } else {
-          s = s.replace(/,/g, ''); // dot decimal, remove commas as thousands
-        }
-      } else if (hasComma) {
-        s = s.replace(',', '.'); // single comma = decimal
-      }
-      const n = Number(s);
-      return Number.isFinite(n) ? n : null;
-    }
-
-    formatBeNumber(v: unknown): string {
-      if (v == null || v === '') return '';
-      const n = typeof v === 'number' ? v : Number(v);
-      if (!Number.isFinite(n)) return '';
-      return n.toLocaleString('nl-BE', { maximumFractionDigits: 2 });
-    }
+  }
 }

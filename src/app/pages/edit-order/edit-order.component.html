@@ -1,15 +1,12 @@
 <form [formGroup]="form" (ngSubmit)="submit()" (keydown.enter)="$event.preventDefault()" class="form">
-  <h2>Bestelling aanmaken</h2>
+  <h2>Bestelling aanpassen</h2>
   <div class="group">
     <div class="row two-col">
-      <div [class.invalid]="form.get('name')?.invalid && (form.get('name')?.touched || form.get('name')?.dirty)">
+      <div>
         <label>
           Naam van Bestelling
-          <span class="required">*</span>
         </label>
         <input type="text" formControlName="name" />
-        <small *ngIf="hasError('name', 'required')">Naam is verplicht.</small>
-        <small *ngIf="hasError('name', 'minlength')">Naam moet minstens 2 karakters bevatten.</small>
       </div>
       <div [class.invalid]="form.get('goalActivity')?.invalid && (form.get('goalActivity')?.touched || form.get('goalActivity')?.dirty)">
         <label>
@@ -35,36 +32,25 @@
 
 <div class="group">
   <div class="row two-col">
-      <div [class.invalid]="form.get('responsibleName')?.invalid && (form.get('responsibleName')?.touched || form.get('responsibleName')?.dirty)">
+      <div>
         <label>
           Naam Verantwoordelijke
-          <span class="required">*</span>
         </label>
         <input type="text" formControlName="responsibleName" />
-        <small *ngIf="hasError('responsibleName', 'required')">Verantwoordelijke is verplicht.</small>
-        <small *ngIf="hasError('responsibleName', 'minlength')">Verantwoordelijke moet minstens 2 karakters bevatten.</small>
       </div>
-       <div [class.invalid]="form.get('responsibleEmail')?.invalid && (form.get('responsibleEmail')?.touched || form.get('responsibleEmail')?.dirty)">
+       <div>
         <label>
           Email verantwoordelijke
-          <span class="required">*</span>
         </label>
         <input type="email" formControlName="responsibleEmail" />
-          <small *ngIf="hasError('responsibleEmail','required')">Email is verplicht.</small>
-          <small *ngIf="hasError('responsibleEmail','email')">Ongeldig e-mailadres.</small>
       </div>
     </div>
     <div class="row two-col">
-      <div [class.invalid]="form.get('responsiblePhone')?.invalid && (form.get('responsiblePhone')?.touched || form.get('responsiblePhone')?.dirty)">
+      <div>
         <label>
           Telefoonnummer Verantwoordelijke
-          <span class="required">*</span>
         </label>
-        <input type="tel" formControlName="responsiblePhone" inputmode="numeric" pattern="^\+?[0-9]{6,15}$" />
-        <small *ngIf="hasError('responsiblePhone','required')">Telefoonnummer is verplicht.</small>
-        <small *ngIf="hasError('responsiblePhone','pattern')">
-          Ongeldig telefoonnummer (gebruik enkel de landcode of enkel cijfers, tussen de 6 en 15 tekens).
-        </small>
+        <input type="tel" formControlName="responsiblePhone" inputmode="numeric" pattern="^\+?[0-9]{6,15}$" readonly="true" />
       </div>
     </div>
 </div>

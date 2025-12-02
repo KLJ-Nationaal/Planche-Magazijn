@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { AuthService } from '../../http/auth.http';
+import { AuthHttp } from '../../http/auth.http';
 import { RouterLink } from '@angular/router';
 
 @Component({
@@ -10,7 +10,7 @@ import { RouterLink } from '@angular/router';
   styleUrl: './header.component.css'
 })
 export class HeaderComponent {
- constructor(private auth: AuthService) {}
+ constructor(private auth: AuthHttp) {}
 
   logout() {
     this.auth.logout();
