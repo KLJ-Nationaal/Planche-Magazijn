@@ -50,7 +50,7 @@ export class AddOrderComponent {
       filter: false,
       valueGetter: (p) => p.node?.rowPinned ? '' : ((p.node?.rowIndex ?? 0) + 1),
     },
-    { field: 'description', headerName: 'Omschrijving materiaal', editable: true, minWidth: 160 },
+    { field: 'name', headerName: 'Omschrijving materiaal', editable: true, minWidth: 160 },
     { field: 'amount', 
       headerName: 'Aantal', 
       editable: true, 
