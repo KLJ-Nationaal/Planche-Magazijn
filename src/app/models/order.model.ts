@@ -1,6 +1,7 @@
 import { OrderItem } from "./order-item.model";
 
 export type Order = {
+  id: number;
   name: string;
   goalActivity: string;
   timing: string;
