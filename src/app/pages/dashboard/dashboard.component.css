@@ -5,8 +5,15 @@
     margin: 0 0 12px 0;
 }
 
+h1 {
+  margin-left: 20px;
+  margin-right: 20px;
+}
+
 .btn {
     margin: 5px;
+    margin-left: 10px;
+    margin-right: 10px;
     padding: 0.45rem 0.9rem;
     border-radius: 6px;
     border: 1px solid transparent;
@@ -31,4 +38,6 @@
 
 ag-grid-angular {
     margin: 5px;
+    margin-left: 10px;
+    margin-right: 10px;
 }

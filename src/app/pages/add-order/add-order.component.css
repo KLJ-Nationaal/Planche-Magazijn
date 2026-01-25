@@ -133,3 +133,43 @@ label.required::after {
   content: " *";
   color: red;
 }
+
+.w-100 { width: 100%; }
+
+.timing-block { width: 100%; }
+.timing-title { font-weight: 600; margin-bottom: 8px; }
+
+.timing-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+.timing-row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end; /* ✅ align bottoms of the fields */
+  flex-wrap: wrap;
+}
+
+.timing-separator-icon {
+  align-self: center;     /* ✅ puts the icon in the middle */
+  height: 56px;           /* matches mat-form-field outline height */
+  display: flex;
+  align-items: center;
+  opacity: 0.6;
+}
+
+.location-field {
+  align-self: flex-start;
+}
+
+.form-section-padding {
+  padding: 0 16px;
+  box-sizing: border-box;
+}
+
+h2 {
+  margin-left: 20px;
+}

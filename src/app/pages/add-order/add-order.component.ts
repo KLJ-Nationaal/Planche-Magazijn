@@ -6,12 +6,21 @@ import { AgGridAngular } from 'ag-grid-angular';
 import { ColDef, GridApi, GridReadyEvent, ICellRendererParams } from 'ag-grid-community';
 import { OrderService } from '../../services/order.service';
 import { OrderItem } from '../../models/order-item.model';
+import { MatTimepickerModule } from '@angular/material/timepicker';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { provideNativeDateAdapter } from '@angular/material/core';
+import { MatSelectModule } from '@angular/material/select';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
 
 @Component({
   selector: 'app-add-order',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, AgGridAngular],
+  imports: [CommonModule, ReactiveFormsModule, AgGridAngular, MatFormFieldModule, MatInputModule, MatSelectModule, MatIconModule, MatTimepickerModule, MatButtonModule],
   templateUrl: './add-order.component.html',
+  providers: [provideNativeDateAdapter()],
   styleUrls: ['./add-order.component.css'],
 })
 export class AddOrderComponent {
@@ -28,8 +37,11 @@ export class AddOrderComponent {
   form = this.fb.group({
     name: this.fb.control('', [Validators.required, Validators.minLength(2)]),
     goalActivity: this.fb.control('', [Validators.required]),
-    timing: this.fb.control({ value: '', disabled: true }), // keep simple; change to a date validator if you like
-    location: this.fb.control({ value: '', disabled: true }),
+    fromDay: ['friday'],
+    fromTime: [''],
+    toDay: ['friday'],
+    toTime: [''],
+    location: this.fb.control(''),
     responsibleName: this.fb.control('', [Validators.required, Validators.minLength(2)]),
     responsibleEmail: this.fb.control('', [Validators.required, Validators.email]),
     responsiblePhone: this.fb.control('', [Validators.required, Validators.pattern(/^[0-9]{8,15}$/)]),
