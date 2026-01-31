@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { AgGridAngular } from 'ag-grid-angular';
 import { ColDef, GridApi, GridReadyEvent, ICellRendererParams } from 'ag-grid-community';
@@ -9,7 +9,7 @@ import { OrderItem } from '../../models/order-item.model';
 
 @Component({
   selector: 'app-edit-order',
-  imports: [CommonModule, ReactiveFormsModule, AgGridAngular],
+  imports: [ReactiveFormsModule, AgGridAngular],
   templateUrl: './edit-order.component.html',
   styleUrl: './edit-order.component.css'
 })

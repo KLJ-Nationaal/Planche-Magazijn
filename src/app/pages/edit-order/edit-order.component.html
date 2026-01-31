@@ -14,7 +14,9 @@
           <span class="required">*</span>
         </label>
         <input type="text" formControlName="goalActivity" />
-        <small *ngIf="hasError('goalActivity', 'required')">Geef een doel op.</small>
+        @if (hasError('goalActivity', 'required')) {
+          <small>Geef een doel op.</small>
+        }
       </div>
     </div>
 
@@ -30,15 +32,15 @@
     </div>
   </div>
 
-<div class="group">
-  <div class="row two-col">
+  <div class="group">
+    <div class="row two-col">
       <div>
         <label>
           Naam Verantwoordelijke
         </label>
         <input type="text" formControlName="responsibleName" />
       </div>
-       <div>
+      <div>
         <label>
           Email verantwoordelijke
         </label>
@@ -53,7 +55,7 @@
         <input type="tel" formControlName="responsiblePhone" inputmode="numeric" pattern="^\+?[0-9]{6,15}$" readonly="true" />
       </div>
     </div>
-</div>
+  </div>
   <div class="grid-card">
     <ag-grid-angular
       class="ag-theme-quartz"

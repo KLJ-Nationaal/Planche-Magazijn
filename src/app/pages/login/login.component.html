@@ -4,22 +4,24 @@
   <form [formGroup]="form" (ngSubmit)="submit()">
     <label for="username">Gebruikersnaam</label>
     <input id="username"
-           type="text"
-           formControlName="username"
-           placeholder="jouw_naam"
-           autocomplete="username" />
+      type="text"
+      formControlName="username"
+      placeholder="jouw_naam"
+      autocomplete="username" />
 
-    <label for="password">Wachtwoord</label>
-    <input id="password"
-           type="password"
-           formControlName="password"
-           placeholder="••••••••"
-           autocomplete="current-password" />
+      <label for="password">Wachtwoord</label>
+      <input id="password"
+        type="password"
+        formControlName="password"
+        placeholder="••••••••"
+        autocomplete="current-password" />
 
-    <button type="submit" [disabled]="loading()">
-      {{ loading() ? 'Aan het inloggen…' : 'Log in' }}
-    </button>
+        <button type="submit" [disabled]="loading()">
+          {{ loading() ? 'Aan het inloggen…' : 'Log in' }}
+        </button>
 
-    <div *ngIf="error()" class="error">{{ error() }}</div>
-  </form>
-</div>
+        @if (error()) {
+          <div class="error">{{ error() }}</div>
+        }
+      </form>
+    </div>

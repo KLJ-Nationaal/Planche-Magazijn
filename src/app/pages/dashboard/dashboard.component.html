@@ -4,8 +4,12 @@
   Nieuwe bestelbon
 </button>
 
-<div *ngIf="loading$ | async">Laden…</div>
-<div *ngIf="(error$ | async) as err">{{ err }}</div>
+@if (loading$ | async) {
+  <div>Laden…</div>
+}
+@if ((error$ | async); as err) {
+  <div>{{ err }}</div>
+}
 
 <ag-grid-angular
   class="ag-theme-quartz"

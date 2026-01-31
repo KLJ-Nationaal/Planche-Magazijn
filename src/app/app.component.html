@@ -1,5 +1,7 @@
-<app-header *ngIf="isAuthenticated"></app-header>
+@if (isAuthenticated) {
+  <app-header></app-header>
+}
 <main>
-    <router-outlet />
+  <router-outlet />
 </main>
 <app-footer></app-footer>

@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { Router } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { AgGridAngular } from 'ag-grid-angular';
@@ -18,7 +18,7 @@ import { MatCardModule } from '@angular/material/card';
 @Component({
   selector: 'app-add-order',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, AgGridAngular, MatFormFieldModule, MatInputModule, MatSelectModule, MatIconModule, MatTimepickerModule, MatButtonModule],
+  imports: [ReactiveFormsModule, AgGridAngular, MatFormFieldModule, MatInputModule, MatSelectModule, MatIconModule, MatTimepickerModule, MatButtonModule],
   templateUrl: './add-order.component.html',
   providers: [provideNativeDateAdapter()],
   styleUrls: ['./add-order.component.css'],

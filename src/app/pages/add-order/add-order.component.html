@@ -5,17 +5,23 @@
       <mat-form-field appearance="outline" class="w-100">
         <mat-label>Naam van Bestelling</mat-label>
         <input matInput type="text" formControlName="name" />
-        <mat-error *ngIf="hasError('name', 'required')">Naam is verplicht.</mat-error>
-        <mat-error *ngIf="hasError('name', 'minlength')">
-          Naam moet minstens 2 karakters bevatten.
-        </mat-error>
+        @if (hasError('name', 'required')) {
+          <mat-error>Naam is verplicht.</mat-error>
+        }
+        @if (hasError('name', 'minlength')) {
+          <mat-error>
+            Naam moet minstens 2 karakters bevatten.
+          </mat-error>
+        }
       </mat-form-field>
     </div>
     <div class="row two-col">
       <mat-form-field appearance="outline" class="w-100">
         <mat-label>Doel activiteit</mat-label>
         <input matInput type="text" formControlName="goalActivity" />
-        <mat-error *ngIf="hasError('goalActivity', 'required')">Geef een doel op.</mat-error>
+        @if (hasError('goalActivity', 'required')) {
+          <mat-error>Geef een doel op.</mat-error>
+        }
       </mat-form-field>
       <mat-form-field appearance="outline" class="w-100 location-field">
         <mat-label>Locatie</mat-label>
@@ -45,7 +51,7 @@
             <input matInput [matTimepicker]="fromPicker" formControlName="fromTime" />
             <mat-timepicker-toggle matIconSuffix [for]="fromPicker"></mat-timepicker-toggle>
           </mat-form-field>
-          
+
           <mat-icon class="timing-separator-icon">remove</mat-icon>
 
           <mat-form-field appearance="outline">
@@ -68,23 +74,31 @@
     </div>
   </div>
 
-<div class="group">
-  <div class="row two-col">
+  <div class="group">
+    <div class="row two-col">
       <mat-form-field appearance="outline" class="w-100">
         <mat-label>Naam Verantwoordelijke</mat-label>
         <input matInput type="text" formControlName="responsibleName" />
-        <mat-error *ngIf="hasError('responsibleName', 'required')">Verantwoordelijke is verplicht.</mat-error>
-        <mat-error *ngIf="hasError('responsibleName', 'minlength')">
-          Verantwoordelijke moet minstens 2 karakters bevatten.
-        </mat-error>
-      </mat-form-field>      
+        @if (hasError('responsibleName', 'required')) {
+          <mat-error>Verantwoordelijke is verplicht.</mat-error>
+        }
+        @if (hasError('responsibleName', 'minlength')) {
+          <mat-error>
+            Verantwoordelijke moet minstens 2 karakters bevatten.
+          </mat-error>
+        }
+      </mat-form-field>
     </div>
     <div class="row two-col">
       <mat-form-field appearance="outline" class="w-100">
         <mat-label>Email verantwoordelijke</mat-label>
         <input matInput type="email" formControlName="responsibleEmail" />
-        <mat-error *ngIf="hasError('responsibleEmail', 'required')">Email is verplicht.</mat-error>
-        <mat-error *ngIf="hasError('responsibleEmail', 'email')">Ongeldig e-mailadres.</mat-error>
+        @if (hasError('responsibleEmail', 'required')) {
+          <mat-error>Email is verplicht.</mat-error>
+        }
+        @if (hasError('responsibleEmail', 'email')) {
+          <mat-error>Ongeldig e-mailadres.</mat-error>
+        }
       </mat-form-field>
       <mat-form-field appearance="outline" class="w-100">
         <mat-label>Telefoonnummer Verantwoordelijke</mat-label>
@@ -94,39 +108,43 @@
           formControlName="responsiblePhone"
           inputmode="numeric"
           pattern="^\\+?[0-9]{6,15}$"
-        />
-        <mat-error *ngIf="hasError('responsiblePhone', 'required')">Telefoonnummer is verplicht.</mat-error>
-        <mat-error *ngIf="hasError('responsiblePhone', 'pattern')">
-          Ongeldig telefoonnummer (gebruik enkel de landcode of enkel cijfers, tussen de 6 en 15 tekens).
-        </mat-error>
+          />
+          @if (hasError('responsiblePhone', 'required')) {
+            <mat-error>Telefoonnummer is verplicht.</mat-error>
+          }
+          @if (hasError('responsiblePhone', 'pattern')) {
+            <mat-error>
+              Ongeldig telefoonnummer (gebruik enkel de landcode of enkel cijfers, tussen de 6 en 15 tekens).
+            </mat-error>
+          }
+        </mat-form-field>
+      </div>
+    </div>
+    <div class="grid-card">
+      <ag-grid-angular
+        class="ag-theme-quartz"
+        style="width: 100%; height: 520px"
+        [rowData]="rowData"
+        [columnDefs]="columnDefs"
+        [defaultColDef]="defaultColDef"
+        [stopEditingWhenCellsLoseFocus]="true"
+        (gridReady)="onGridReady($event)">
+      </ag-grid-angular>
+      <div class="grid-footer">
+        <button class="btn btn-primary btn-full" (click)="addRow(); $event.preventDefault(); $event.stopPropagation();">➕ Nieuw item</button>
+      </div>
+    </div>
+
+    <div class="group">
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Opmerkingen</mat-label>
+        <textarea matInput rows="4" formControlName="comment"></textarea>
       </mat-form-field>
     </div>
-  </div>
-  <div class="grid-card">
-    <ag-grid-angular
-      class="ag-theme-quartz"
-      style="width: 100%; height: 520px"
-      [rowData]="rowData"
-      [columnDefs]="columnDefs"
-      [defaultColDef]="defaultColDef"
-      [stopEditingWhenCellsLoseFocus]="true"
-      (gridReady)="onGridReady($event)">
-    </ag-grid-angular>
-    <div class="grid-footer">
-      <button class="btn btn-primary btn-full" (click)="addRow(); $event.preventDefault(); $event.stopPropagation();">➕ Nieuw item</button>
+    <div class="form-section-padding">
+      <div class="row actions">
+        <button mat-stroked-button type="reset">Reset</button>
+        <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">Opslaan</button>
+      </div>
     </div>
-  </div>
-
-  <div class="group">
-    <mat-form-field appearance="outline" class="w-100">
-      <mat-label>Opmerkingen</mat-label>
-      <textarea matInput rows="4" formControlName="comment"></textarea>
-    </mat-form-field>
-  </div>
-  <div class="form-section-padding">
-    <div class="row actions">
-      <button mat-stroked-button type="reset">Reset</button>
-      <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">Opslaan</button>
-    </div>
-  </div>
-</form>
+  </form>
