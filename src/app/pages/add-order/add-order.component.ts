@@ -1,26 +1,22 @@
 import { Component, inject } from '@angular/core';
-
 import { Router } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { AgGridAngular } from 'ag-grid-angular';
 import { ColDef, GridApi, GridReadyEvent, ICellRendererParams } from 'ag-grid-community';
 import { OrderService } from '../../services/order.service';
 import { OrderItem } from '../../models/order-item.model';
-import { MatTimepickerModule } from '@angular/material/timepicker';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { provideNativeDateAdapter } from '@angular/material/core';
-import { MatSelectModule } from '@angular/material/select';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
+import { FloatLabelModule } from 'primeng/floatlabel';
+import { InputTextModule } from 'primeng/inputtext';
+import { TextareaModule } from 'primeng/textarea';
+import { ButtonModule } from 'primeng/button';
+import { SelectModule } from 'primeng/select';
+import { DatePickerModule  } from 'primeng/datepicker';
 
 @Component({
   selector: 'app-add-order',
   standalone: true,
-  imports: [ReactiveFormsModule, AgGridAngular, MatFormFieldModule, MatInputModule, MatSelectModule, MatIconModule, MatTimepickerModule, MatButtonModule],
+  imports: [ReactiveFormsModule, AgGridAngular, FloatLabelModule, InputTextModule, TextareaModule, ButtonModule, SelectModule, DatePickerModule ],
   templateUrl: './add-order.component.html',
-  providers: [provideNativeDateAdapter()],
   styleUrls: ['./add-order.component.css'],
 })
 export class AddOrderComponent {
@@ -47,6 +43,12 @@ export class AddOrderComponent {
     responsiblePhone: this.fb.control('', [Validators.required, Validators.pattern(/^[0-9]{8,15}$/)]),
     comment: this.fb.control('', { nonNullable: true }),
   });
+
+  dayOptions = [
+    { label: 'Vrijdag', value: 'friday' },
+    { label: 'Zaterdag', value: 'saturday' },
+    { label: 'Zondag', value: 'sunday' }
+  ];
 
   hasError(path: string, err: string) {
     const ctrl = this.form.get(path);

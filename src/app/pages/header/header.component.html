@@ -10,6 +10,12 @@
     </a>
   </div>
   <div class="right">
+    <p-button
+      [icon]="theme.isDark() ? 'pi pi-sun' : 'pi pi-moon'"
+      rounded
+      text
+      (onClick)="toggleTheme()">
+    </p-button>
     <button (click)="logout()">Logout</button>
   </div>
 </nav>

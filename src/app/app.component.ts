@@ -5,6 +5,7 @@ import { AgGridModule } from 'ag-grid-angular';
 import { HeaderComponent } from './pages/header/header.component';
 import { FooterComponent } from "./pages/footer/footer.component";
 import { AuthHttp } from './http/auth.http';
+import { ThemeService } from './services/theme.service';
 
 @Component({
   selector: 'app-root',
@@ -15,7 +16,9 @@ import { AuthHttp } from './http/auth.http';
 export class AppComponent {
   title = 'magazijn-app';
 
-  constructor(private auth: AuthHttp) {}
+  constructor(private auth: AuthHttp, private theme: ThemeService) {
+    this.theme.init();
+  }
 
   get isAuthenticated(): boolean {
     return this.auth.isAuthenticated;

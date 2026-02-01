@@ -1,32 +1,64 @@
-<form [formGroup]="form" (ngSubmit)="submit()" (keydown.enter)="$event.preventDefault()" class="form">
+<form
+  [formGroup]="form"
+  (ngSubmit)="submit()"
+  (keydown.enter)="$event.preventDefault()"
+  class="form"
+>
   <h2>Bestelling aanmaken</h2>
+
   <div class="group">
     <div class="row two-col">
-      <mat-form-field appearance="outline" class="w-100">
-        <mat-label>Naam van Bestelling</mat-label>
-        <input matInput type="text" formControlName="name" />
+      <div class="w-100">
+        <p-floatLabel variant="on">
+          <input
+            pInputText
+            id="name"
+            type="text"
+            formControlName="name"
+            class="w-100"
+          />
+          <label for="name">Naam van Bestelling</label>
+        </p-floatLabel>
+
         @if (hasError('name', 'required')) {
-          <mat-error>Naam is verplicht.</mat-error>
+          <small class="p-error">Naam is verplicht.</small>
         }
         @if (hasError('name', 'minlength')) {
-          <mat-error>
-            Naam moet minstens 2 karakters bevatten.
-          </mat-error>
+          <small class="p-error">Naam moet minstens 2 karakters bevatten.</small>
         }
-      </mat-form-field>
+      </div>
     </div>
+
     <div class="row two-col">
-      <mat-form-field appearance="outline" class="w-100">
-        <mat-label>Doel activiteit</mat-label>
-        <input matInput type="text" formControlName="goalActivity" />
+      <div class="w-100">
+        <p-floatLabel variant="on">
+          <input
+            pInputText
+            id="goalActivity"
+            type="text"
+            formControlName="goalActivity"
+            class="w-100"
+          />
+          <label for="goalActivity">Doel activiteit</label>
+        </p-floatLabel>
+
         @if (hasError('goalActivity', 'required')) {
-          <mat-error>Geef een doel op.</mat-error>
+          <small class="p-error">Geef een doel op.</small>
         }
-      </mat-form-field>
-      <mat-form-field appearance="outline" class="w-100 location-field">
-        <mat-label>Locatie</mat-label>
-        <input matInput type="text" formControlName="location" />
-      </mat-form-field>
+      </div>
+
+      <div class="w-100 location-field">
+        <p-floatLabel variant="on">
+          <input
+            pInputText
+            id="location"
+            type="text"
+            formControlName="location"
+            class="w-100"
+          />
+          <label for="location">Locatie</label>
+        </p-floatLabel>
+      </div>
     </div>
   </div>
 
@@ -36,39 +68,55 @@
         <div class="timing-title">Timing</div>
 
         <div class="timing-row">
-          <mat-form-field appearance="outline">
-            <mat-label>Dag</mat-label>
-            <mat-select formControlName="fromDay">
-              <mat-option value="friday">Vrijdag</mat-option>
-              <mat-option value="saturday">Zaterdag</mat-option>
-              <mat-option value="sunday">Zondag</mat-option>
-            </mat-select>
-          </mat-form-field>
+          <p-floatLabel>
+            <p-select
+              inputId="fromDay"
+              [options]="dayOptions"
+              optionLabel="label"
+              optionValue="value"
+              formControlName="fromDay"
+              appendTo="body"
+            ></p-select>
+            <label for="fromDay">Dag</label>
+          </p-floatLabel>
 
-          <mat-form-field appearance="outline">
-            <mat-label>From</mat-label>
-            <mat-timepicker #fromPicker interval="15m"></mat-timepicker>
-            <input matInput [matTimepicker]="fromPicker" formControlName="fromTime" />
-            <mat-timepicker-toggle matIconSuffix [for]="fromPicker"></mat-timepicker-toggle>
-          </mat-form-field>
+          <p-floatLabel>
+            <p-datepicker
+              inputId="fromTime"
+              formControlName="fromTime"
+              [timeOnly]="true"
+              hourFormat="24"
+              [stepMinute]="15"
+              appendTo="body"
+            ></p-datepicker>
+            <label for="fromTime">From</label>
+          </p-floatLabel>
 
-          <mat-icon class="timing-separator-icon">remove</mat-icon>
+          <i class="pi pi-minus timing-separator-icon" aria-hidden="true"></i>
 
-          <mat-form-field appearance="outline">
-            <mat-label>Dag</mat-label>
-            <mat-select formControlName="toDay">
-              <mat-option value="friday">Vrijdag</mat-option>
-              <mat-option value="saturday">Zaterdag</mat-option>
-              <mat-option value="sunday">Zondag</mat-option>
-            </mat-select>
-          </mat-form-field>
+          <p-floatLabel>
+            <p-select
+              inputId="toDay"
+              [options]="dayOptions"
+              optionLabel="label"
+              optionValue="value"
+              formControlName="toDay"
+              appendTo="body"
+            ></p-select>
+            <label for="toDay">Dag</label>
+          </p-floatLabel>
 
-          <mat-form-field appearance="outline">
-            <mat-label>To</mat-label>
-            <mat-timepicker #toPicker interval="15m"></mat-timepicker>
-            <input matInput [matTimepicker]="toPicker" formControlName="toTime" />
-            <mat-timepicker-toggle matIconSuffix [for]="toPicker"></mat-timepicker-toggle>
-          </mat-form-field>
+          <p-floatLabel>
+            <p-datepicker
+              inputId="toTime"
+              formControlName="toTime"
+              [timeOnly]="true"
+              hourFormat="24"
+              [stepMinute]="15"
+              appendTo="body"
+            ></p-datepicker>
+            <label for="toTime">To</label>
+          </p-floatLabel>
         </div>
       </div>
     </div>
@@ -76,75 +124,115 @@
 
   <div class="group">
     <div class="row two-col">
-      <mat-form-field appearance="outline" class="w-100">
-        <mat-label>Naam Verantwoordelijke</mat-label>
-        <input matInput type="text" formControlName="responsibleName" />
+      <div class="w-100">
+        <p-floatLabel variant="on">
+          <input
+            pInputText
+            id="responsibleName"
+            type="text"
+            formControlName="responsibleName"
+            class="w-100"
+          />
+          <label for="responsibleName">Naam verantwoordelijke</label>
+        </p-floatLabel>
+
         @if (hasError('responsibleName', 'required')) {
-          <mat-error>Verantwoordelijke is verplicht.</mat-error>
+          <small class="p-error">Verantwoordelijke is verplicht.</small>
         }
         @if (hasError('responsibleName', 'minlength')) {
-          <mat-error>
+          <small class="p-error">
             Verantwoordelijke moet minstens 2 karakters bevatten.
-          </mat-error>
+          </small>
         }
-      </mat-form-field>
-    </div>
-    <div class="row two-col">
-      <mat-form-field appearance="outline" class="w-100">
-        <mat-label>Email verantwoordelijke</mat-label>
-        <input matInput type="email" formControlName="responsibleEmail" />
-        @if (hasError('responsibleEmail', 'required')) {
-          <mat-error>Email is verplicht.</mat-error>
-        }
-        @if (hasError('responsibleEmail', 'email')) {
-          <mat-error>Ongeldig e-mailadres.</mat-error>
-        }
-      </mat-form-field>
-      <mat-form-field appearance="outline" class="w-100">
-        <mat-label>Telefoonnummer Verantwoordelijke</mat-label>
-        <input
-          matInput
-          type="tel"
-          formControlName="responsiblePhone"
-          inputmode="numeric"
-          pattern="^\\+?[0-9]{6,15}$"
-          />
-          @if (hasError('responsiblePhone', 'required')) {
-            <mat-error>Telefoonnummer is verplicht.</mat-error>
-          }
-          @if (hasError('responsiblePhone', 'pattern')) {
-            <mat-error>
-              Ongeldig telefoonnummer (gebruik enkel de landcode of enkel cijfers, tussen de 6 en 15 tekens).
-            </mat-error>
-          }
-        </mat-form-field>
-      </div>
-    </div>
-    <div class="grid-card">
-      <ag-grid-angular
-        class="ag-theme-quartz"
-        style="width: 100%; height: 520px"
-        [rowData]="rowData"
-        [columnDefs]="columnDefs"
-        [defaultColDef]="defaultColDef"
-        [stopEditingWhenCellsLoseFocus]="true"
-        (gridReady)="onGridReady($event)">
-      </ag-grid-angular>
-      <div class="grid-footer">
-        <button class="btn btn-primary btn-full" (click)="addRow(); $event.preventDefault(); $event.stopPropagation();">➕ Nieuw item</button>
       </div>
     </div>
 
-    <div class="group">
-      <mat-form-field appearance="outline" class="w-100">
-        <mat-label>Opmerkingen</mat-label>
-        <textarea matInput rows="4" formControlName="comment"></textarea>
-      </mat-form-field>
-    </div>
-    <div class="form-section-padding">
-      <div class="row actions">
-        <button mat-stroked-button type="reset">Reset</button>
-        <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">Opslaan</button>
+    <div class="row two-col">
+      <div class="w-100">
+        <p-floatLabel variant="on">
+          <input
+            pInputText
+            id="responsibleEmail"
+            type="email"
+            formControlName="responsibleEmail"
+            class="w-100"
+          />
+          <label for="responsibleEmail">Email verantwoordelijke</label>
+        </p-floatLabel>
+
+        @if (hasError('responsibleEmail', 'required')) {
+          <small class="p-error">Email is verplicht.</small>
+        }
+        @if (hasError('responsibleEmail', 'email')) {
+          <small class="p-error">Ongeldig e-mailadres.</small>
+        }
+      </div>
+
+      <div class="w-100">
+        <p-floatLabel variant="on">
+          <input
+            pInputText
+            id="responsiblePhone"
+            type="tel"
+            formControlName="responsiblePhone"
+            inputmode="numeric"
+            pattern="^\\+?[0-9]{6,15}$"
+            class="w-100"
+          />
+          <label for="responsiblePhone">Telefoonnummer Verantwoordelijke</label>
+        </p-floatLabel>
+
+        @if (hasError('responsiblePhone', 'required')) {
+          <small class="p-error">Telefoonnummer is verplicht.</small>
+        }
+        @if (hasError('responsiblePhone', 'pattern')) {
+          <small class="p-error">
+            Ongeldig telefoonnummer (gebruik enkel de landcode of enkel cijfers, tussen de 6 en 15 tekens).
+          </small>
+        }
       </div>
     </div>
-  </form>
+  </div>
+
+  <div class="grid-card">
+    <ag-grid-angular
+      class="ag-theme-quartz"
+      style="width: 100%; height: 520px"
+      [rowData]="rowData"
+      [columnDefs]="columnDefs"
+      [defaultColDef]="defaultColDef"
+      [stopEditingWhenCellsLoseFocus]="true"
+      (gridReady)="onGridReady($event)"
+    >
+    </ag-grid-angular>
+
+    <div class="grid-footer">
+      <p-button
+        label="Nieuw item"
+        icon="pi pi-plus"
+        styleClass="btn-full"
+        (onClick)="addRow(); $event.preventDefault(); $event.stopPropagation();"
+      ></p-button>
+    </div>
+  </div>
+
+  <div class="group">
+    <p-floatLabel class="w-100" variant="on">
+      <textarea
+        pInputTextarea
+        id="comment"
+        rows="4"
+        formControlName="comment"
+        class="w-100"
+      ></textarea>
+      <label for="comment">Opmerkingen</label>
+    </p-floatLabel>
+  </div>
+
+  <div class="form-section-padding">
+    <div class="row actions">
+      <p-button type="reset" label="Reset" severity="secondary" outlined="true"></p-button>
+      <p-button type="submit" label="Opslaan" [disabled]="form.invalid"></p-button>
+    </div>
+  </div>
+</form>
